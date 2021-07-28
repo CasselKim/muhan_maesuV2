@@ -1,5 +1,6 @@
-# muhan_maesu
-무한매수법 자동화
+# Muhan Maesu V2
+무한매수법 자동화 (업데이트/2021/07/28)  
+토큰을 잘못 올려서 레포를 다시 생성했습니다(내 모내기...😥)  
 
 ## Introduction
 Let's automate **infinite buy** method that popular these days  
