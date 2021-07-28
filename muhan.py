@@ -102,10 +102,9 @@ if __name__ == "__main__":
         token = secrets["token"]
     
     upbit = pu.Upbit(access_key, secret_key)
-    coins = [coin(upbit, token, *x) for x in initial]
-    
     initial = main(upbit)
     
+    coins = [coin(upbit, token, *x) for x in initial]
     while True : 
         if str(datetime.now())[11:19] == '00:00:00' : 
             for coin in coins :
