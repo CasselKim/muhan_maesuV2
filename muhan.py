@@ -21,7 +21,7 @@ def main(upbit) :
                 if not principal.isdigit() : 
                     print("Please check principal format")
                 else : 
-                    if principal < 400000 :
+                    if int(principal) < 400000 :
                         print("principal should be more than 400,000Won.")
                         continue
                     else : 
