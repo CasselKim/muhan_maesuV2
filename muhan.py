@@ -88,7 +88,7 @@ def main(upbit) :
         if flag.lower() not in ('y','n') : 
             print("format : y or n")
         else : 
-            if flag=='y' : break
+            if flag.lower()=='y' : break
             else : 
                 exit("Please restart program.")
     return initial
