@@ -7,7 +7,7 @@ import time
 
 def main() :
     initial = []
-    if len(sys.argv)==0 : 
+    if len(sys.argv)==1 : 
         while True : 
             while True : 
                 ticker = input("코인티커를 적어주세요(Ex:BTC) : ")
