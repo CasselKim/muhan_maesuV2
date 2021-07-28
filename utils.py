@@ -78,7 +78,7 @@ class coin() :
         
         current_price = self.get_current_price()
         
-        if current_price < self.avg*0.99999999 and self.remain > self.split: 
+        if current_price < self.avg*0.9 and self.remain > self.split: 
             self.upbit.buy_market_order(self.ticker, self.split)
             self.update_state()
             self.already=True
