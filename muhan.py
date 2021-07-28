@@ -80,7 +80,7 @@ def main(upbit) :
         print("{:<8s}{:<18s}{:<14s}".format(x[0],format(x[1], ',')+'Won',x[2]))
     print("-------------------------------------------")
 
-    if sum([int(x[1]) for x in initial]) > int(upbit.principal(self.ticker)) : 
+    if sum([int(x[1]) for x in initial]) > int(upbit.get_balance('KRW')) : 
         print("[Warning] the sum of principals is bigger than balance of upbit account!!! The process can be end earlier before 40 days")
 
     while True : 
