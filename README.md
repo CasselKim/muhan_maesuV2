@@ -20,3 +20,4 @@ Let's automate **infinite buy** method that popular these days
 - 10% profit with Bitcoin (2021-07-01)
 - 10% profit with Bitcoin (2021-07-25)
 - 10% profit with Steam Dollar (2021-07-30)
+- 10% profit with Ethereum (2021-07-30)
