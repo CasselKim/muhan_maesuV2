@@ -16,6 +16,11 @@ Let's automate **infinite buy** method that popular these days
 4. Download requirements
 5. Run `python3 manage.py`
 
+## Update
+- now multiple coins can be used at the same time  
+  1. by adding an information of ticker, principal, and first buy to 'order.json'  
+  2. by writting down and information of ticker, principal, and first buy on the shell 
+
 ## Result
 - 10% profit with Bitcoin (2021-07-01)
 - 10% profit with Bitcoin (2021-07-25)
