@@ -116,15 +116,15 @@ if __name__ == "__main__":
                     coin.buy_LOC()
 
         for coin in coins : 
-        
-            # End session
-            if coin.remain <= 10000 : 
-                result = coin.sell_end()
-                if result == False : 
-                    coins.remove(coin)
+            if str(datetime.now())[19:21] == '.0' : # for every second
+                # End session
+                if coin.remain <= 10000 : 
+                    result = coin.sell_end()
+                    if result == False : 
+                        coins.remove(coin)
 
-            # Check session
-            else : 
-                if not coin.already :
-                    coin.buy_lower()
-                coin.sell_over()
+                # Check session
+                else : 
+                    if not coin.already :
+                        coin.buy_lower()
+                    coin.sell_over()

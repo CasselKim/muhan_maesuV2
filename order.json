@@ -2,18 +2,8 @@
     "coins" : [
         {
             "ticker" : "BTC",
-            "balance" : "400000",
+            "principal" : "400000",
             "first_buy" : "n"
-        },
-        {
-            "ticker" : "DOGE",
-            "balance" : "600000",
-            "first_buy" : "y"
-        },
-        {
-            "ticker" : "AXS",
-            "balance" : "800000",
-            "first_buy" : "y"
         }
     ]
 }
