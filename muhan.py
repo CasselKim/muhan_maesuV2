@@ -83,14 +83,6 @@ def main(upbit) :
     if sum([int(x[1]) for x in initial]) > int(upbit.get_balance('KRW')) : 
         print("[Warning] the sum of principals is bigger than balance of upbit account!!! The process can be end earlier before 40 days")
 
-    while True : 
-        flag = input("Do you want to proceed?[Y/N] : ")
-        if flag.lower() not in ('y','n') : 
-            print("format : y or n")
-        else : 
-            if flag.lower()=='y' : break
-            else : 
-                exit("Please restart program.")
     return initial
     
 if __name__ == "__main__":

@@ -30,6 +30,7 @@ class coin() :
         if self.split < 5000 : raise(Exception("Lower than minimum price.")) #Exception
         if first_buy=='Y' : 
             self.upbit.buy_market_order(self.ticker, self.split) #First buy
+            time.sleep(2)
             self.update_state()
             post_message(self.token, "#notice","[RESTART]\nCoin : {}\nPrincipal : {}Won\nFirst Buy Avarage Price : {}Won".format(self.ticker,self.principal,self.avg))
             post_message(self.token, "#notice","[BUY]  {} {} at {} ({})".format('First Buy',self.ticker,self.avg,str(datetime.now())[:-7]))
@@ -45,6 +46,7 @@ class coin() :
 
         # First Buy
         self.upbit.buy_market_order(self.ticker, self.split)
+        time.sleep(2)
         self.update_state()
         post_message(self.token, "#notice","[RESTART]\nCoin : {}\nPrincipal : {}Won\nFirst Buy Avarage Price : {}Won".format(self.ticker,self.principal,self.avg))
         post_message(self.token, "#notice","[BUY]  {} {} at {} ({})".format('First Buy',self.ticker,self.avg,str(datetime.now())[:-7]))
@@ -59,6 +61,7 @@ class coin() :
         #LOC average price buy case
         if current_price < self.avg and self.remain > self.split/2 : 
             self.upbit.buy_market_order(self.ticker, self.split/2)
+            time.sleep(2)
             self.update_state(half=True)
             self.already = True
             post_message(self.token, "#notice","[BUY]  {} {} at {} ({})".format('LOC Buy under case',self.ticker,self.avg,str(datetime.now())[:-7]))
@@ -67,6 +70,7 @@ class coin() :
         #LOC Big average price buy case
         if current_price < self.avg*1.1 and self.remain > self.split/2: 
             self.upbit.buy_market_order(self.ticker, self.split/2)
+            time.sleep(2)
             self.update_state(half=True)
             self.already = True
             post_message(self.token, "#notice","[BUY]  {} {} at {} ({})".format('LOC Buy over case',self.ticker,self.avg,str(datetime.now())[:-7]))
@@ -80,6 +84,7 @@ class coin() :
         
         if current_price < self.avg*0.9 and self.remain > self.split: 
             self.upbit.buy_market_order(self.ticker, self.split)
+            time.sleep(2)
             self.update_state()
             self.already=True
             post_message(self.token, "#notice","[BUY]  {} {} at {} ({})".format('Lower Buy',self.ticker,self.avg,str(datetime.now())[:-7]))
