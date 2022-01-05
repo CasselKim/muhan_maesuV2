@@ -14,18 +14,20 @@ Let's automate **infinite buy** method that popular these days
 ## Use
 1. Clone the files on local or AWS instance
 2. Make `secret.json` and put access keys (upbit keys and slack token)
-3. Also edit type of coins and principals you want in `order.json` 
+3. Also edit type of coins and principals you want in `order.json` or you can just use `python3 order.py` to make your orders easier.
 4. Download requirements
 5. Run `python3 muhan.py`
 6. If you want to execute in one time, use `python3 muhan.py -p order.json`
-7. If you execute on aws, use `nohup python3 -u muhan.py -p order.json  \> /dev/null 2>&1 &` . Then the process will run on background.
+7. If you execute on aws, use `nohup python3 -u muhan.py -p order.json > /dev/null 2>&1 &` . Then the process will run on background.
 8. In this case, you can check and shut down using `ps -ef | grep .py` and `sudo kill -9 codes(ex : 1118, 1781..)`  
 
 ## Update
 - now multiple coins can be used at the same time  
   1. by adding an information of ticker, principal, and first buy to 'order.json'  
   2. by writting down and information of ticker, principal, and first buy on the shell 
-- now state update execute every second
+- now state update execute every second (2021-01-04)
+- now you can make order.json by using `order.py` (2021-01-05)
+
 
 ## Result
 - 10% profit with Bitcoin (2021-07-01)
