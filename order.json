@@ -1,9 +1,19 @@
 {
-    "coins" : [
-        {
-            "ticker" : "BTC",
-            "principal" : "400000",
-            "first_buy" : "n"
-        }
-    ]
+	"coins": [
+		{
+			"ticker": "BTC",
+			"principal": 400000,
+			"first_buy": "Y"
+		},
+		{
+			"ticker": "BTT",
+			"principal": 400000,
+			"first_buy": "Y"
+		},
+		{
+			"ticker": "ETH",
+			"principal": 600000,
+			"first_buy": "Y"
+		}
+	]
 }
