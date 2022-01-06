@@ -18,7 +18,7 @@ Let's automate **infinite buy** method that popular these days
 4. Download requirements
 5. Run `python3 muhan.py`
 6. If you want to execute in one time, use `python3 muhan.py -p order.json`
-7. If you execute on aws, use `nohup python3 -u muhan.py -p order.json > /dev/null 2>&1 &` . Then the process will run on background.
+7. If you execute on aws, use `nohup python3 muhan.py -p order.json > /dev/null 2>&1 &` . Then the process will run on background.
 8. In this case, you can check and shut down using `ps -ef | grep .py` and `sudo kill -9 codes(ex : 1118, 1781..)`  
 
 ## Update
@@ -27,6 +27,8 @@ Let's automate **infinite buy** method that popular these days
   2. by writting down and information of ticker, principal, and first buy on the shell 
 - now state update execute every second (2021-01-04)
 - now you can make order.json by using `order.py` (2021-01-05)
+- now you can set environments by using `requirements.sh` (2021-01-06)  
+- now you can make secret.json by using `secret.py` (2021-01-06)
 
 
 ## Result
