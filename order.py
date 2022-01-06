@@ -94,4 +94,4 @@ def saveOrderJson(orders) :
 
 if __name__ == '__main__' : 
     orders = createOrder()
-    saveOrderJson(saveOrderJson)
+    saveOrderJson(orders)
