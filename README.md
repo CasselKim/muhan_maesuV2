@@ -13,7 +13,11 @@ Let's automate **infinite buy** method that popular these days
 - requests
 - pyupbit
 
-## Use
+## Use  
+Considering conversion of architecture from EC2 to Mobile app (Flutter)  
+Too hard to use for non-developer user  
+![image](Untitled.png)  
+
 1. Clone the files on local or AWS instance
 2. Make `secret.json` and put access keys (upbit keys and slack token)
 3. Also edit type of coins and principals you want in `order.json` or you can just use `python3 order.py` to make your orders easier.
