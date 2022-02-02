@@ -35,6 +35,7 @@ Too hard to use for non-developer user
 - now you can make order.json by using `order.py` (2021-01-05)
 - now you can set environments by using `requirements.sh` (2021-01-06)  
 - now you can make secret.json by using `secret.py` (2021-01-06)
+- now you can access Django page by using `python runserver` on local environments (2021-02-03)  
 
 
 ## Result
