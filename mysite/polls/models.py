@@ -18,6 +18,7 @@ class TradeHistory(models.Model):
     history_my_price_after = models.DecimalField(max_digits=20, decimal_places=10)
     history_execution_time = models.IntegerField()
     history_date = models.DateTimeField()
+    history_done = models.IntegerField()
 
     class Meta:
         managed = False
