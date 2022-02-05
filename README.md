@@ -37,10 +37,13 @@ Too hard to use for non-developer user
 - now you can make secret.json by using `secret.py` (2021-01-06)
 - now you can access Django page by using `python runserver` on local environments (2021-02-03)  
 
+## Now working..
 
-## Result
-- 10% profit with Bitcoin (2021-07-01)
-- 10% profit with Bitcoin (2021-07-25)
-- 10% profit with Steam Dollar (2021-07-30)
-- 10% profit with Ethereum (2021-07-30)
-- ...
+Mocking Adming page  
+
+![image](01.png)  
+
+![image](02.png)  
+
+![image](03.png)  
+
