@@ -57,14 +57,15 @@
                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
             </div>          
         </div>
-        <div class="col-md-3" style="border: 1px solid #999;">
+        <div class="col-md-4" style="border: 1px solid #999;">
             <div class="row justify-content-end">
                 <p class="col text-start my-2">티커</p>
                 <p class="col text-end my-2">수익률</p>
                 <p class="col text-end my-2">진행도</p>
             </div>
+            
             <hr class="my-1"></hr>
-            <div class="row">
+            <div class="row" onclick="#kk" >
                 <ul class="col list-unstyled text-start mb-0">
                     <li>전체</li>
                     <li>All</li>
@@ -81,15 +82,15 @@
             {% for coin in trade_per_coin %}
             <hr class="my-1"></hr>
             <div class="row">
-                <ul class="col list-unstyled text-start mb-0">
+                <ul class="col-4 list-unstyled text-start mb-0">
                     <li>티커</li>
                     <li>{{coin.ticker}}</li>
                 </ul>
-                <ul class="col list-unstyled text-danger text-end mb-0" >
+                <ul class="col-4 list-unstyled text-danger text-end mb-0" >
                     <li>%</li>
                     <li>▲ 12346￦</li>
                 </ul>
-                <ul class="col list-unstyled text-end mb-0" >
+                <ul class="col-4 list-unstyled text-end mb-0" >
                     <li>{{coin.execution_count}}/40*100%</li>
                     <li>{{coin.execution_count}}일</li>
                 </ul>
