@@ -72,6 +72,9 @@ class TradePerCoin(models.Model):
     already = models.IntegerField()
     remain = models.IntegerField()
     recent_update = models.DateTimeField()
+    ticker_name = models.CharField(max_length=40)
+    coin_profit = models.IntegerField()
+    coin_profit_percent = models.DecimalField(max_digits=5, decimal_places=3)
 
     class Meta:
         managed = False

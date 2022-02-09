@@ -19,36 +19,20 @@
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                         <div class="row mx-1 mt-3">
                             <div class="col-2" style="color:#ff0000;">
-                                <div class="row">
-                                    {{account_state.total_profit_percent}}%
-                                </div>
-                                <div class="row">
-                                    ▲ {{account_state.total_profit}}￦
-                                </div>
+                                <div><p2 class="average">{{account_state.total_profit_percent}}</p2>%</div>
+                                <div>▲ <p2 class="average">{{account_state.total_profit}}</p2>￦</div>
                             </div>
                             <div class="col">
-                                <div class="row">
-                                    총 자산 : {{account_state.total_balance}}원
-                                </div>
-                                <div class="row">
-                                    입금액 : {{account_state.total_deposit}}원
-                                </div>
+                                <div>총 자산 : <p2 class="average">{{account_state.total_balance}}</p2>￦</div>
+                                <div>입금액 : <p2 class="average">{{account_state.total_deposit}}</p2>￦</div>
                             </div>
                             <div class="col">
-                                <div class="row">
-                                    매수자본 : {{account_state.total_buy}}원
-                                </div>
-                                <div class="row">
-                                    보유현금 : {{account_state.total_cash}}원
-                                </div>
+                                <div>매수자본 : <p2 class="average">{{account_state.total_buy}}</p2>￦</div>
+                                <div>보유현금 : <p2 class="average">{{account_state.total_cash}}</p2>￦</div>
                             </div>
                             <div class="col">
-                                <div class="row">
-                                    매도횟수 : {{account_state.sell_count}}번
-                                </div>
-                                <div class="row">
-                                    총평가손익 : {{account_state.total_profit}}원
-                                </div>
+                                <div>매도횟수 : <p2 class="average">{{account_state.sell_count}}</p2>번</div>
+                                <div>총평가손익 : <p2 class="average">{{account_state.total_profit}}</p2>￦</div>
                             </div>
                         </div>
                         <hr></hr>
@@ -66,42 +50,26 @@
             {% for coin in trade_per_coin %}
                 <div class="tab-pane fade" id="list-{{coin.ticker}}" role="tabpanel" aria-labelledby="list-{{coin.ticker}}-list">
                     <ul class="row nav nav-tabs mt-1">
-                        <h4 class="col-md mt-1">비트코인 {{coin.ticker}}</h4>
+                        <h4 class="col-md mt-1">{{coin.ticker_name}} {{coin.ticker}}</h4>
                         <div class="col-md"></div>
                     </ul>
                     <div>
                         <div class="row mx-1 mt-3">
                             <div class="col-2" style="color:#ff0000;">
-                                <div class="row">
-                                    땡땡%
-                                </div>
-                                <div class="row">
-                                    뚱땅￦
-                                </div>
+                                <div><p2 class="average">{{coin.coin_profit_percent}}</p2>%</div>
+                                <div>▲ <p2 class="average">{{coin.coin_profit}}</p2>￦</div>
                             </div>
                             <div class="col">
-                                <div class="row">
-                                    원금 : {{coin.principal}}원
-                                </div>
-                                <div class="row">
-                                    분할금액 : {{coin.split}}원
-                                </div>
+                                <div>원금 : <p2 class="average">{{coin.principal}}</p2>￦</div>
+                                <div>분할금액 : <p2 class="average">{{coin.split}}</p2>￦</div>
                             </div>
                             <div class="col">
-                                <div class="row">
-                                    매수금액 : {{coin.average}}원
-                                </div>
-                                <div class="row">
-                                    평가금액 : 지금api로 받아오는 실시간금액
-                                </div>
+                                <div>매수금액 : <p2 class="average">{{coin.average}}</p2>￦</div>
+                                <div>평가금액 : <p2 class="average">지금api로 받아오는 실시간금액</p2>￦</div>
                             </div>
                             <div class="col">
-                                <div class="row">
-                                    진행일 : {{coin.execution_count}}일
-                                </div>
-                                <div class="row">
-                                    남은금액 : {{coin.remain}}원
-                                </div>
+                                <div>진행일 : <p2 class="average">{{coin.execution_count}}</p2>일</div>
+                                <div>남은금액 : <p2 class="average">{{coin.remain}}</p2>￦</div>
                             </div>
                         </div>
                         <hr></hr>
@@ -132,8 +100,8 @@
                             <div>ALL</div>
                         </div>
                         <div class="col text-end">
-                            <div>{{account_state.total_profit_percent}}%</div>
-                            <div>▲ {{account_state.total_profit}}￦</div>
+                            <div><p2 class="average">{{account_state.total_profit_percent}}</p2>%</div>
+                            <div><p2 class="average">{{account_state.total_profit}}</p2>￦</div>
                         </div>
                         <div class="col text-end">
                             <p class="col mb-0">-</p>
@@ -147,16 +115,16 @@
                 <a class="list-group-item list-group-item-action" id="list-{{coin.ticker}}-list" data-bs-toggle="list" href="#list-{{coin.ticker}}" role="tab" aria-controls="list-{{coin.ticker}}">
                     <div class="row me-auto">
                         <div class="col text-start">
-                            <div>비트코인</div>
+                            <div>{{coin.ticker_name}}</div>
                             <div>{{coin.ticker}}</div>
                         </div>
                         <div class="col text-end">
-                            <div>떙떙</div>
-                            <div>뚱땅</div>
+                            <div><p2 class="average">{{coin.coin_profit_percent}}</p2>%</div>
+                            <div><p2 class="average">{{coin.coin_profit}}</p2>￦</div>
                         </div>
                         <div class="col text-end">
-                            <div>{{coin.execution_count}}/40*100%</div>
-                            <div>{{coin.execution_count}}일</div>
+                            <div><p2 class="average">{{coin.execution_count}}</p2>%</div>
+                            <div><p2 class="average">{{coin.execution_count}}</p2>￦</div>
                         </div>
 
                     </div>
@@ -172,10 +140,21 @@
     triggerTabList.forEach(function (triggerEl) {
       var tabTrigger = new bootstrap.Tab(triggerEl)
       triggerEl.addEventListener('click', function (event) {
-        event.preventDefault()
-        tabTrigger.show()
+        event.preventDefault();
+        tabTrigger.show();
       })
     })
+</script>
+<script>
+    function average_formatting() {
+        var averages = document.querySelectorAll('.average');
+        averages.forEach(function(average) {
+            var average_value = Number(average.innerHTML);
+            
+            average.innerHTML = average_value.toLocaleString();
+        });
+    };
+    average_formatting();
 </script>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
