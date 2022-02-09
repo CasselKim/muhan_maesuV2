@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-3">
-    <div class='row justify-content-center'>
+    <div class='row justify-content-center mb-4'>
         <div class="tab-content col" id="nav-tabContent" style="border: 1px solid #999;">
             <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
                 <ul class="row nav nav-tabs mt-1" id="myTab" role="tablist">
                     <h4 class="col-md mt-1">전체 ALL</h4>
-                    <div class="col-md"></div>
+                    
                     <li class="col-md-2 nav-item px-0" role="presentation">
                         <button class="col-12 nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">개요</button>
                     </li>
-                    <li class="col-md nav-item px-0" role="presentation">
+                    <li class="col-md-2 nav-item px-0" role="presentation">
                         <button class="col-12 nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">히스토리</button>
                     </li>
                 </ul>
@@ -59,68 +59,64 @@
                         </div>
                         <div style="width: 100%; position: relative; height: 300px; z-index:1;" id="line_top_x"></div>
                     </div>
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
                 </div>          
             </div>
-            <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
-                <ul class="row nav nav-tabs mt-1" id="myTab" role="tablist">
-                    <h4 class="col-md mt-1">비트코인 BTC/KRW</h4>
-                    <div class="col-md"></div>
-                    <li class="col-md-2 nav-item px-0" role="presentation">
-                        <button class="col-12 nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">개요</button>
-                    </li>
-                    <li class="col-md nav-item px-0" role="presentation">
-                        <button class="col-12 nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">히스토리</button>
-                    </li>
-                </ul>
-                
-                <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            {% if trade_per_coin %}
+            {% for coin in trade_per_coin %}
+                <div class="tab-pane fade" id="list-{{coin.ticker}}" role="tabpanel" aria-labelledby="list-{{coin.ticker}}-list">
+                    <ul class="row nav nav-tabs mt-1">
+                        <h4 class="col-md mt-1">비트코인 {{coin.ticker}}</h4>
+                        <div class="col-md"></div>
+                    </ul>
+                    <div>
                         <div class="row mx-1 mt-3">
                             <div class="col-2" style="color:#ff0000;">
                                 <div class="row">
-                                    {{account_state.total_profit_percent}}%
+                                    땡땡%
                                 </div>
                                 <div class="row">
-                                    ▲ {{account_state.total_profit}}￦
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="row">
-                                    총 자산 : {{account_state.total_balance}}원
-                                </div>
-                                <div class="row">
-                                    입금액 : {{account_state.total_deposit}}원
+                                    뚱땅￦
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="row">
-                                    매수자본 : {{account_state.total_buy}}원
+                                    원금 : {{coin.principal}}원
                                 </div>
                                 <div class="row">
-                                    보유현금 : {{account_state.total_cash}}원
+                                    분할금액 : {{coin.split}}원
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="row">
-                                    매도횟수 : {{account_state.sell_count}}번
+                                    매수금액 : {{coin.average}}원
                                 </div>
                                 <div class="row">
-                                    총평가손익 : {{account_state.total_profit}}원
+                                    평가금액 : 지금api로 받아오는 실시간금액
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="row">
+                                    진행일 : {{coin.execution_count}}일
+                                </div>
+                                <div class="row">
+                                    남은금액 : {{coin.remain}}원
                                 </div>
                             </div>
                         </div>
                         <hr></hr>
                         <div style="float:right; position: relative; z-index:2;">
-                            <button type="button" class="btn btn-primary" id="btc_refresh">
+                            <button type="button" class="btn btn-primary" id="refresh_{{coin.ticker}}">
                                 <i class="fa fa-refresh"> refresh</i>
                             </button>
                         </div>
-                        <div style="width: 100%; position: relative; height: 300px; z-index:1;" id="btc_chart"></div>
-                    </div>
-                </div>          
-            </div>
+                        <div style="width: 100%; position: relative; height: 300px; z-index:1;" id="chart_{{coin.ticker}}"></div>
+                    </div>          
+                </div>
+            {% endfor %}
+            {% endif %}
         </div>
-        <div class="col-md-4" style="border: 1px solid #999;">
+        <div class="col-lg-4" style="border: 1px solid #999;">
             <div class="row justify-content-end">
                 <p class="col text-start my-2">티커</p>
                 <p class="col text-end my-2">수익률</p>
@@ -129,49 +125,45 @@
             
             <hr class="my-1"></hr>
             <div class="list-group list-group-flush" id="list-tab" role="tablist">
-                <a class="list-group-item list-group-item-action active" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home">Home</a>
-                <a class="list-group-item list-group-item-action" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="list-profile">Profile</a>
-                <a class="list-group-item list-group-item-action" id="list-messages-list" data-bs-toggle="list" href="#list-messages" role="tab" aria-controls="list-messages">Messages</a>
-                <a class="list-group-item list-group-item-action" id="list-settings-list" data-bs-toggle="list" href="#list-settings" role="tab" aria-controls="list-settings">Settings</a>
-            </div>
-            <!--
-            <div class="row">
-                <button class="row mx-0" onclick="#kk" >
-                    <ul class="col list-unstyled text-start mb-0">
-                        <li>전체</li>
-                        <li>All</li>
-                    </ul>
-                    <ul class="col list-unstyled text-danger text-end mb-0" >
-                        <li>{{account_state.total_profit_percent}}%</li>
-                        <li>▲ {{account_state.total_profit}}￦</li>
-                    </ul>
-                    <p class="col text-center mb-0">
-                        -
-                    </p>
-                </button> 
-            </div> 
-            {% if trade_per_coin %}
-            {% for coin in trade_per_coin %}
-            <hr class="my-1"></hr>
-            <div class="row">
-                <ul class="col-4 list-unstyled text-start mb-0">
-                    <li>티커</li>
-                    <li>{{coin.ticker}}</li>
-                </ul>
-                <ul class="col-4 list-unstyled text-danger text-end mb-0" >
-                    <li>%</li>
-                    <li>▲ 12346￦</li>
-                </ul>
-                <ul class="col-4 list-unstyled text-end mb-0" >
-                    <li>{{coin.execution_count}}/40*100%</li>
-                    <li>{{coin.execution_count}}일</li>
-                </ul>
-            </div>  
-            {% endfor %}
-            {% endif %}
-            -->
+                <a class="list-group-item list-group-item-action active" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home">
+                    <div class="row me-auto">
+                        <div class="col text-start">
+                            <div>전체</div>
+                            <div>ALL</div>
+                        </div>
+                        <div class="col text-end">
+                            <div>{{account_state.total_profit_percent}}%</div>
+                            <div>▲ {{account_state.total_profit}}￦</div>
+                        </div>
+                        <div class="col text-end">
+                            <p class="col mb-0">-</p>
+                        </div>
 
-            
+                    </div>
+                </a>
+                {% if trade_per_coin %}
+                {% for coin in trade_per_coin %}
+                <input type="hidden" id="coinVar" value="{{ coin.ticker }}">
+                <a class="list-group-item list-group-item-action" id="list-{{coin.ticker}}-list" data-bs-toggle="list" href="#list-{{coin.ticker}}" role="tab" aria-controls="list-{{coin.ticker}}">
+                    <div class="row me-auto">
+                        <div class="col text-start">
+                            <div>비트코인</div>
+                            <div>{{coin.ticker}}</div>
+                        </div>
+                        <div class="col text-end">
+                            <div>떙떙</div>
+                            <div>뚱땅</div>
+                        </div>
+                        <div class="col text-end">
+                            <div>{{coin.execution_count}}/40*100%</div>
+                            <div>{{coin.execution_count}}일</div>
+                        </div>
+
+                    </div>
+                </a>
+                {% endfor %}
+                {% endif %} 
+            </div>  
         </div>
     </div>
 </div>
@@ -234,9 +226,14 @@
     var chart = new google.charts.Line(document.getElementById('line_top_x'));
     chart.draw(data, google.charts.Line.convertOptions(options));
 
-    $('#list-home-list').click(function() {
-        var btc_chart = new google.charts.Line(document.getElementById('btc_chart'));
-        btc_chart.draw(data, google.charts.Line.convertOptions(options));
+    var coins = document.querySelectorAll("#coinVar");
+    
+
+    $("[id^=refresh]").on('click', function(event){ 
+        var id = $(this).attr("id");
+        var ticker = id.replace("refresh_", "");
+        var chart = new google.charts.Line(document.getElementById('chart_'+ticker));
+        chart.draw(data, google.charts.Line.convertOptions(options));
     });
 
     $('#all_refresh').click(function() {
@@ -244,10 +241,7 @@
         chart.draw(data, google.charts.Line.convertOptions(options));
     });
 
-    $('#btc_refresh').click(function() {
-        var btc_chart = new google.charts.Line(document.getElementById('btc_chart'));
-        btc_chart.draw(data, google.charts.Line.convertOptions(options));
-    });
+
 
 }
 </script>
