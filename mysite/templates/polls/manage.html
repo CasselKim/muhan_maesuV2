@@ -122,9 +122,9 @@
                             <div><p2 class="average">{{coin.coin_profit_percent}}</p2>%</div>
                             <div><p2 class="average">{{coin.coin_profit}}</p2>￦</div>
                         </div>
-                        <div class="col text-end">
-                            <div><p2 class="average">{{coin.execution_count}}</p2>%</div>
-                            <div><p2 class="average">{{coin.execution_count}}</p2>￦</div>
+                        <div class="col text-end proceed">
+                            <div><p2 class="average proceed-target">{{coin.execution_count}}</p2>%</div>
+                            <div><p2 class="average proceed-source">{{coin.execution_count}}</p2>일</div>
                         </div>
 
                     </div>
@@ -146,7 +146,7 @@
     })
 </script>
 <script>
-    function average_formatting() {
+    function averageFormatting() {
         var averages = document.querySelectorAll('.average');
         averages.forEach(function(average) {
             var average_value = Number(average.innerHTML);
@@ -165,8 +165,16 @@
             }
         });
     };
-    average_formatting();
+    function proceedPercent() {
+        var proceeds = document.querySelectorAll('.proceed');
+        proceeds.forEach(function(proceed) {
+            var execution_count = Number(proceed.getElementsByClassName('proceed-source')[0].innerHTML);
+            proceed.getElementsByClassName('proceed-target')[0].innerHTML = (execution_count/40).toFixed(2);
+        });
+    };
+    averageFormatting();
     upDownColoring();
+    proceedPercent();
 </script>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
