@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('common/', include('common.urls')),
     path('', views.index, name='index'),  # '/' 에 해당되는 path
+    path('googlechart', views.googlechart, name='googlechart'),  # '/' 에 해당되는 path
 ]
