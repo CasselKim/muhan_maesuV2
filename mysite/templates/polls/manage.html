@@ -18,7 +18,7 @@
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                         <div class="row mx-1 mt-3">
-                            <div class="col-2" style="color:#ff0000;">
+                            <div class="col-2 updown">
                                 <div><p2 class="average">{{account_state.total_profit_percent}}</p2>%</div>
                                 <div>▲ <p2 class="average">{{account_state.total_profit}}</p2>￦</div>
                             </div>
@@ -55,7 +55,7 @@
                     </ul>
                     <div>
                         <div class="row mx-1 mt-3">
-                            <div class="col-2" style="color:#ff0000;">
+                            <div class="col-2 updown" style="color:#ff0000;">
                                 <div><p2 class="average">{{coin.coin_profit_percent}}</p2>%</div>
                                 <div>▲ <p2 class="average">{{coin.coin_profit}}</p2>￦</div>
                             </div>
@@ -85,7 +85,7 @@
             {% endif %}
         </div>
         <div class="col-lg-4" style="border: 1px solid #999;">
-            <div class="row justify-content-end">
+            <div class="row justify-content-end mx-1">
                 <p class="col text-start my-2">티커</p>
                 <p class="col text-end my-2">수익률</p>
                 <p class="col text-end my-2">진행도</p>
@@ -99,7 +99,7 @@
                             <div>전체</div>
                             <div>ALL</div>
                         </div>
-                        <div class="col text-end">
+                        <div class="col text-end updown">
                             <div><p2 class="average">{{account_state.total_profit_percent}}</p2>%</div>
                             <div><p2 class="average">{{account_state.total_profit}}</p2>￦</div>
                         </div>
@@ -118,7 +118,7 @@
                             <div>{{coin.ticker_name}}</div>
                             <div>{{coin.ticker}}</div>
                         </div>
-                        <div class="col text-end">
+                        <div class="col text-end updown">
                             <div><p2 class="average">{{coin.coin_profit_percent}}</p2>%</div>
                             <div><p2 class="average">{{coin.coin_profit}}</p2>￦</div>
                         </div>
@@ -154,7 +154,19 @@
             average.innerHTML = average_value.toLocaleString();
         });
     };
+    function upDownColoring() {
+        var updowns = document.querySelectorAll('.updown');
+        updowns.forEach(function(updown) {
+            if(updown.innerHTML.indexOf('-')==-1){
+                updown.style.color =  "#ff0000";
+            }
+            else{
+                updown.style.color =  "#0000ff";
+            }
+        });
+    };
     average_formatting();
+    upDownColoring();
 </script>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
