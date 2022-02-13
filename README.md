@@ -42,8 +42,3 @@ Too hard to use for non-developer user
 Mocking Adming page  
 
 ![image](01.png)  
-
-![image](02.png)  
-
-![image](03.png)  
-

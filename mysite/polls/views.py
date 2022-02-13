@@ -18,9 +18,15 @@ def index(request) :
     
 def googlechart(request) : 
     ticker = request.GET['ticker']
-    logs = PriceLog.objects.filter(log_ticker=ticker).order_by('log_date')
-    log_list = serializers.serialize('json', logs)
-    return HttpResponse(log_list, content_type="text/json")
+    if ticker=='all' : 
+        histories = TradeHistory.objects.all().only('histotry_ticker','history_date','history_profit').order_by('history_date')
+        histories += list(set([h.history_ticker for h in histories]))
+        history_list = serializers.serialize('json', histories)
+        return HttpResponse(history_list, content_type="text/json")
+    else : 
+        logs = PriceLog.objects.filter(log_ticker=ticker).only('log_date', 'log_price').order_by('log_date')
+        log_list = serializers.serialize('json', logs)
+        return HttpResponse(log_list, content_type="text/json")
 
 
 # Create your views here.

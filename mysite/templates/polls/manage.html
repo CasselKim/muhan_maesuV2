@@ -37,7 +37,7 @@
                         </div>
                         <hr></hr>
                         <div style="float:right; position: relative; z-index:2;">
-                            <button type="button" class="btn btn-primary" id="all_refresh">
+                            <button type="button" class="btn btn-primary" id="refresh_all">
                                 <i class="fa fa-refresh"> refresh</i>
                             </button>
                         </div>
@@ -126,7 +126,6 @@
                             <div><p2 class="average proceed-target">{{coin.execution_count}}</p2>%</div>
                             <div><p2 class="average proceed-source">{{coin.execution_count}}</p2>일</div>
                         </div>
-
                     </div>
                 </a>
                 {% endfor %}
@@ -185,7 +184,7 @@
 
         var options = {
             width: '100%',
-            
+            interpolateNulls: true,
             axes: {
             x: {
                 0: {side: 'bottom'}
@@ -204,22 +203,33 @@
             var ticker = id.replace("refresh_", "");
 
             var data = new google.visualization.DataTable();
-            data.addColumn('datetime', 'time');
-            data.addColumn('number', 'coin price');
     
             const request = new XMLHttpRequest();
-            request.open('GET', '/googlechart?ticker='+ticker), true;
+            request.open('GET', '/googlechart?ticker='+ticker, true);
             request.responseType='json';
             request.send();
             request.onreadystatechange = function(event){
                 if(request.readyState == 4 && request.status == 200){
                     const responseData = request.response;
-                    responseData.forEach(function(res){
-                        data.addRows([[new Date(res.fields.log_date), Number(res.fields.log_price)]]);
-                    });
+                    if(ticker=='all'){
+                        var coins = responseData[0].coins;
+                        data.addColumn('datetime', 'time');
+                        coins.forEach(function(coin){
+                            data.addColumn('number', coin+' profit');
+                        });
+                        responseData.forEach(function(res){
+                            data.addRows([res.fields.profits.map(Number).unshift(new Date(res.fields.history_date))]);
+                        });
+                    }
+                    else{
+                        data.addColumn('datetime', 'time');
+                        data.addColumn('number', 'coin price');
+                        responseData.forEach(function(res){
+                            data.addRows([[new Date(res.fields.log_date), Number(res.fields.log_price)]]);
+                        });
+                    }
                 }
             }
-
             var chart = new google.charts.Line(document.getElementById('chart_'+ticker));
             chart.draw(data, google.charts.Line.convertOptions(options));
         });
