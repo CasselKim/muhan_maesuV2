@@ -23,7 +23,7 @@ class AccountState(models.Model):
 
 class TradeHistory(models.Model):
     userid = models.ForeignKey('UserInfo', models.DO_NOTHING, db_column='UserID')  # Field name made lowercase.        
-    histotry_ticker = models.CharField(max_length=40)
+    history_ticker = models.CharField(max_length=40)
     history_buy_or_sell = models.IntegerField()
     history_coin_price = models.DecimalField(max_digits=20, decimal_places=10)
     history_amount = models.IntegerField()

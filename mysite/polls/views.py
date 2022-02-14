@@ -16,11 +16,17 @@ def index(request) :
     else : 
         return redirect('common/login')
     
+class coinObject() : 
+    def __init__(self,coin) : 
+        self.coin = coin
+
 def googlechart(request) : 
     ticker = request.GET['ticker']
     if ticker=='all' : 
-        histories = TradeHistory.objects.all().only('histotry_ticker','history_date','history_profit').order_by('history_date')
-        histories += list(set([h.history_ticker for h in histories]))
+        histories = list(TradeHistory.objects.all().only('history_ticker','history_date','history_profit').order_by('history_date'))
+        print(histories)
+        histories += coinObject((set([h.history_ticker for h in histories])))
+        print(histories)
         history_list = serializers.serialize('json', histories)
         return HttpResponse(history_list, content_type="text/json")
     else : 
