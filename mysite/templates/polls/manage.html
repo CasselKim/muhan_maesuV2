@@ -35,9 +35,9 @@
                                 <div>총평가손익 : <p2 class="average">{{account_state.total_profit}}</p2>￦</div>
                             </div>
                         </div>
-                        <hr></hr>
+                        <hr class="mb-0"></hr>
                         <div style="float:right; position: relative; z-index:2;">
-                            <button type="button" class="btn btn-primary" id="refresh_all">
+                            <button type="button" class="btn btn-primary mt-4" id="refresh_all">
                                 <i class="fa fa-refresh"> refresh</i>
                             </button>
                         </div>
@@ -149,7 +149,6 @@
         var averages = document.querySelectorAll('.average');
         averages.forEach(function(average) {
             var average_value = Number(average.innerHTML);
-            
             average.innerHTML = average_value.toLocaleString();
         });
     };
@@ -168,7 +167,7 @@
         var proceeds = document.querySelectorAll('.proceed');
         proceeds.forEach(function(proceed) {
             var execution_count = Number(proceed.getElementsByClassName('proceed-source')[0].innerHTML);
-            proceed.getElementsByClassName('proceed-target')[0].innerHTML = (execution_count/40).toFixed(2);
+            proceed.getElementsByClassName('proceed-target')[0].innerHTML = (execution_count/40*100).toFixed(2);
         });
     };
     averageFormatting();
@@ -187,15 +186,14 @@
                 width: '100%',
                 interpolateNulls: true,
                 axes: {
-                x: {
-                    0: {side: 'bottom'}
-                }
-                },
-                legend : {
-                    position: 'none',
-                    textStyle: {
-                        color: 'blue', fontSize: 16
+                    x: {
+                        0: {side: 'bottom'}
                     }
+                },
+                theme : {
+                    chartArea: {width: '90%', height: '80%'},
+                    legend: {position: 'in'},
+                    titlePosition: 'in', axisTitlesPosition: 'in',
                 }
             };
 
