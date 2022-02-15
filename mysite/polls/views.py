@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from .models import UserInfo,TradePerCoin,TradeHistory,PriceLog,AccountState
 from django.contrib.auth import get_user
 from django.core import serializers
+import time
 
 
 def index(request) : 
@@ -23,14 +24,11 @@ class coinObject() :
 def googlechart(request) : 
     ticker = request.GET['ticker']
     if ticker=='all' : 
-        histories = list(TradeHistory.objects.all().only('history_ticker','history_date','history_profit').order_by('history_date'))
-        print(histories)
-        histories += coinObject((set([h.history_ticker for h in histories])))
-        print(histories)
+        histories = list(TradeHistory.objects.all().order_by('history_date'))
         history_list = serializers.serialize('json', histories)
         return HttpResponse(history_list, content_type="text/json")
     else : 
-        logs = PriceLog.objects.filter(log_ticker=ticker).only('log_date', 'log_price').order_by('log_date')
+        logs = PriceLog.objects.filter(log_ticker=ticker).order_by('log_date')
         log_list = serializers.serialize('json', logs)
         return HttpResponse(log_list, content_type="text/json")
 

@@ -41,7 +41,7 @@
                                 <i class="fa fa-refresh"> refresh</i>
                             </button>
                         </div>
-                        <div style="width: 100%; position: relative; height: 300px; z-index:1;" id="line_top_x"></div>
+                        <div style="width: 100%; position: relative; height: 300px; z-index:1;" id="chart_all"></div>
                     </div>
                     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
                 </div>          
@@ -176,79 +176,73 @@
     proceedPercent();
 </script>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script type="text/javascript">
-    google.charts.load('current', {'packages':['line']});
-    google.charts.setOnLoadCallback(drawChart);
-
-    function drawChart(ticker) {
-
-        var options = {
-            width: '100%',
-            interpolateNulls: true,
-            axes: {
-            x: {
-                0: {side: 'bottom'}
-            }
-            },
-            legend : {
-                position: 'none',
-                textStyle: {
-                    color: 'blue', fontSize: 16
+    $("[id^=refresh]").on('click', function(event){ 
+        google.load('visualization', '1.0', {'packages':['corechart']});
+        const t = this;
+        
+        function drawChart() {
+            var options = {
+                width: '100%',
+                interpolateNulls: true,
+                axes: {
+                x: {
+                    0: {side: 'bottom'}
                 }
-            }
-        };
+                },
+                legend : {
+                    position: 'none',
+                    textStyle: {
+                        color: 'blue', fontSize: 16
+                    }
+                }
+            };
 
-        $("[id^=refresh]").on('click', function(event){ 
-            var id = $(this).attr("id");
+            var id = $(t).attr("id");
             var ticker = id.replace("refresh_", "");
-
+              
             var data = new google.visualization.DataTable();
     
             const request = new XMLHttpRequest();
-            request.open('GET', '/googlechart?ticker='+ticker, true);
+            request.open('GET', '/googlechart?ticker='+ticker,true);
             request.responseType='json';
             request.send();
             request.onreadystatechange = function(event){
                 if(request.readyState == 4 && request.status == 200){
                     const responseData = request.response;
                     if(ticker=='all'){
-                        var coins = responseData[0].coins;
-                        data.addColumn('datetime', 'time');
-                        coins.forEach(function(coin){
-                            data.addColumn('number', coin+' profit');
+                        var coins = [];
+                        responseData.forEach(function(res){
+                            coins.push(res.fields.history_ticker);
+                        });
+                        const uniqueCoins = Array.from(new Set(coins));
+                        data.addColumn('datetime', 'date');
+                        uniqueCoins.forEach(function(ucoin){
+                            data.addColumn('number', ucoin+'_profit');
                         });
                         responseData.forEach(function(res){
-                            data.addRows([res.fields.profits.map(Number).unshift(new Date(res.fields.history_date))]);
+                            const rowForm = Array.from({length: uniqueCoins.length}, () => null);
+                            rowForm[uniqueCoins.indexOf(res.fields.history_ticker)]=Number(res.fields.history_profit);
+                            rowForm.unshift(new Date(res.fields.history_date));
+                            data.addRows([rowForm]);
                         });
+                        var chart = new google.visualization.LineChart(document.getElementById('chart_'+ticker));
+                        chart.draw(data,options);
                     }
                     else{
-                        data.addColumn('datetime', 'time');
+                        data.addColumn('datetime', 'date');
                         data.addColumn('number', 'coin price');
                         responseData.forEach(function(res){
                             data.addRows([[new Date(res.fields.log_date), Number(res.fields.log_price)]]);
                         });
+                        var chart = new google.visualization.LineChart(document.getElementById('chart_'+ticker));
+                        chart.draw(data,options);
                     }
                 }
-            }
-            var chart = new google.charts.Line(document.getElementById('chart_'+ticker));
-            chart.draw(data, google.charts.Line.convertOptions(options));
-        });
-    }
-
-    
-
-
-
-        //var chart = new google.charts.Line(document.getElementById('line_top_x'));
-        //chart.draw(data, google.charts.Line.convertOptions(options));
-
-        //var coins = document.querySelectorAll("#coinVar");
-        
-
-//        $('#all_refresh').click(function() {
-//            var chart = new google.charts.Line(document.getElementById('line_top_x'));
-//            chart.draw(data, google.charts.Line.convertOptions(options));
-//        });
-    
+            };
+        }
+        google.charts.setOnLoadCallback(drawChart);
+    });
 </script>
 {% endblock %}
