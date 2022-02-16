@@ -16,6 +16,8 @@ class AccountState(models.Model):
     sell_count = models.IntegerField()
     total_profit = models.IntegerField()
     total_profit_percent = models.DecimalField(max_digits=5, decimal_places=2)
+    last_deposit_uuid = models.CharField(max_length=40)
+    last_withdraws_uuid = models.CharField(max_length=40)
 
     class Meta:
         managed = False
