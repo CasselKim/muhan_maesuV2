@@ -7,6 +7,16 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
+class AccessKey(models.Model):
+    userid = models.OneToOneField('UserInfo', models.DO_NOTHING, db_column='UserID', primary_key=True)  # Field name made lowercase.
+    upbit_secret_key = models.CharField(max_length=40)
+    upbit_access_key = models.CharField(max_length=40)
+    slack_token = models.CharField(max_length=40)
+
+    class Meta:
+        managed = False
+        db_table = 'access_key'
+
 class AccountState(models.Model):
     userid = models.OneToOneField('UserInfo', models.DO_NOTHING, db_column='UserID', primary_key=True)  # Field name made lowercase.
     total_balance = models.IntegerField()
