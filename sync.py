@@ -76,7 +76,6 @@ def updateWithdraws(db,withdraws,account)  :
             break
         total+=float(dep['amount'])
     last_withdraws_uuid = withdraws[0]["uuid"].replace("-","")
-    print(total)
     
     # Update last_deposit_uuid, total deposit
     db.query("""
@@ -96,60 +95,57 @@ def getAccounts(db) :
         account_list.append(accountObj(*map(lambda x : x.decode('ascii'),f)))
     return account_list
 
-
 def updateTotalBalance(db,upbit,account) : 
     balances = upbit.get_balances()
     cash = float(balances[0]['balance'])
     
     total = 0.0
     for coin in balances[1:] : 
-        total += float(coin['balance']) * float(coin['avg_buy_price'])
+        total += float(coin['balance']) * pyupbit.get_current_price('KRW-'+coin['currency'])
     total += cash
     
-    print("total_balance total : {}".format(total))
+    #print("total_balance total : {}".format(total))
     db.query("""
              UPDATE account_state
-             SET total_balance="""+total+\
+             SET total_balance="""+str(total)+\
              " WHERE userid="+account.userid)
     
 def updateTotalBuy(db,upbit,account) : 
     total_amount = upbit.get_amount('ALL')
     
-    print("total_buy total : {}".format(total_amount))
+    #print("total_buy total : {}".format(total_amount))
     db.query("""
              UPDATE account_state
-             SET total_buy="""+total_amount+\
+             SET total_buy="""+str(total_amount)+\
              " WHERE userid="+account.userid)
     
 def updateTotalCash(db,upbit,account) : 
     total_cash = upbit.get_balance(ticker='KRW')
     
-    print("total_buy total : {}".format(total_cash))
+    #print("total_cash total : {}".format(total_cash))
     db.query("""
              UPDATE account_state
-             SET total_cash="""+total_cash+\
+             SET total_cash="""+str(total_cash)+\
              " WHERE userid="+account.userid)
     
+def updateTotalProfit(db,upbit,account) : 
+    db.query("""
+            SELECT total_balance,total_deposit FROM account_state
+            WHERE userid="""+account.userid)
+    r=db.store_result()
+    total_balance,total_deposit = map(lambda x : int(x), r.fetch_row()[0])
+    total_profit = total_balance-total_deposit
+    total_profit_percent = "%.2f" %(total_balance/total_deposit*100-100)
     
+    #print("total_profit : {}".format(total_profit))
+    #print("total_profit_percent : {}".format(total_profit_percent))
+    
+    db.query("""
+            UPDATE account_state
+            SET total_profit="""+str(total_profit)+", total_profit_percent="+str(total_profit_percent)+\
+            " WHERE userid="+account.userid)
     
 def account_sync(db,upbit,account) : 
-    
-    print(upbit.__dir__())
-    # querying needed data
-    
-    balanaces = upbit.get_balances()
-    total_balance = int(float(balanaces[0]['balance']))
-    for b in balanaces[1:] : 
-        total_balance += int(pyupbit.get_current_price('KRW-'+b['currency'])*float(b['balance']))
-        
-    #print('총 자산(total_balance):',total_balance)
-    #print('매수자본(total_buy) :',int(upbit.get_amount('ALL')))
-    #print('보유현금(total_cash) :',int(upbit.get_balance(ticker='KRW')))
-    
-    #print('비트코인 평단 :',upbit.get_avg_buy_price('KRW-BTC'))
-    #print('비트코인 총 매수금액 :',int(upbit.get_amount('KRW-BTC')))
-    #print('현재 비트코인 가격 :',pyupbit.get_current_price('KRW-BTC'))
-    
     #Update total_balance
     updateTotalBalance(db,upbit,account)
 
@@ -167,14 +163,13 @@ def account_sync(db,upbit,account) :
     #Update total_cash
     updateTotalCash(db,upbit,account)
     
-    
+    #Update total_profit and total_profit_percent
+    updateTotalProfit(db,upbit,account)
     
     
     
     
     return 0
-    
-
 
 if __name__ == "__main__" : 
     
