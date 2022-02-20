@@ -106,10 +106,30 @@ def updateTotalBalance(db,upbit,account) :
         total += float(coin['balance']) * float(coin['avg_buy_price'])
     total += cash
     
+    print("total_balance total : {}".format(total))
     db.query("""
              UPDATE account_state
              SET total_balance="""+total+\
              " WHERE userid="+account.userid)
+    
+def updateTotalBuy(db,upbit,account) : 
+    total_amount = upbit.get_amount('ALL')
+    
+    print("total_buy total : {}".format(total_amount))
+    db.query("""
+             UPDATE account_state
+             SET total_buy="""+total_amount+\
+             " WHERE userid="+account.userid)
+    
+def updateTotalCash(db,upbit,account) : 
+    total_cash = upbit.get_balance(ticker='KRW')
+    
+    print("total_buy total : {}".format(total_cash))
+    db.query("""
+             UPDATE account_state
+             SET total_cash="""+total_cash+\
+             " WHERE userid="+account.userid)
+    
     
     
 def account_sync(db,upbit,account) : 
@@ -140,6 +160,15 @@ def account_sync(db,upbit,account) :
     #Update Withdraws
     withdraws = getWithdrawsHistory(upbit)
     updateWithdraws(db,withdraws,account)
+    
+    #Update total_buy
+    updateTotalBuy(db,upbit,account)
+    
+    #Update total_cash
+    updateTotalCash(db,upbit,account)
+    
+    
+    
     
     
     
