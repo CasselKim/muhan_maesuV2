@@ -23,21 +23,20 @@ def getDepositsHistory(upbit) :
     response = requests.request("GET", url, headers=headers)
     return response.json()
 
-def updateDeposits(db,upbit,deposits,account) : 
+def updateDeposits(db,deposits,account) : 
     db.query("""
             SELECT * FROM account_state
             WHERE userid="""+account.userid)
     r=db.store_result()
     account_state = r.fetch_row()[0]
-    last_deposit_uuid = account_state[8]
+    last_deposit_uuid = account_state[8].decode('ascii')
     
     total=0
     for dep in deposits : 
         if dep['uuid'].replace("-","")==last_deposit_uuid : 
             break
         total+=float(dep['amount'])
-    new_last_deposit_uuid = deposits[-1]["uuid"].replace("-","")
-    print(total)
+    new_last_deposit_uuid = deposits[0]["uuid"].replace("-","")
     
     # Update last_deposit_uuid, total deposit
     db.query("""
@@ -45,14 +44,34 @@ def updateDeposits(db,upbit,deposits,account) :
              SET last_deposit_uuid='"""+new_last_deposit_uuid+"',total_deposit=total_deposit+"+str(total)+\
              " WHERE userid="+account.userid)
 
-    
 
 def getWithdrawsHistory(upbit) : 
     url = "https://api.upbit.com/v1/withdraws"
     headers = upbit._request_headers() 
     response = requests.request("GET", url, headers=headers)
     return response.json()
-#def checkWithdrawsUpdate(upbit,withdraws)  :
+def updateWithdraws(db,withdraws,account)  :
+    db.query("""
+            SELECT * FROM account_state
+            WHERE userid="""+account.userid)
+    r=db.store_result()
+    account_state = r.fetch_row()[0]
+    last_withdraws_uuid = account_state[9].decode('ascii')
+    
+    total=0
+    for dep in withdraws : 
+        if dep['uuid'].replace("-","")==last_withdraws_uuid : 
+            break
+        total+=float(dep['amount'])
+    last_withdraws_uuid = withdraws[0]["uuid"].replace("-","")
+    print(total)
+    
+    # Update last_deposit_uuid, total deposit
+    db.query("""
+             UPDATE account_state
+             SET last_withdraws_uuid='"""+last_withdraws_uuid+"',total_deposit=total_deposit-"+str(total)+\
+             " WHERE userid="+account.userid)
+    
 def getAccounts(db) : 
     db.query("""
             SELECT * FROM access_key
@@ -75,6 +94,7 @@ def account_sync(db,upbit,account) :
     total_balance = int(float(balanaces[0]['balance']))
     for b in balanaces[1:] : 
         total_balance += int(pyupbit.get_current_price('KRW-'+b['currency'])*float(b['balance']))
+        
     #print('총 자산(total_balance):',total_balance)
     #print('매수자본(total_buy) :',int(upbit.get_amount('ALL')))
     #print('보유현금(total_cash) :',int(upbit.get_balance(ticker='KRW')))
@@ -82,17 +102,15 @@ def account_sync(db,upbit,account) :
     #print('비트코인 평단 :',upbit.get_avg_buy_price('KRW-BTC'))
     #print('비트코인 총 매수금액 :',int(upbit.get_amount('KRW-BTC')))
     #print('현재 비트코인 가격 :',pyupbit.get_current_price('KRW-BTC'))
-    print("===================================")
-    print(upbit.get_api_key_list())
-    print("===================================")
+
+    #Update Deposits
     deposits = getDepositsHistory(upbit)
-    updateDeposits(db,upbit,deposits,account)
+    updateDeposits(db,deposits,account)
     
-    #withdraws = getWithdrawsHistory(upbit)
-    #checkWithdrawsUpdate(db,upbit,withdraws)
+    #Update Withdraws
+    withdraws = getWithdrawsHistory(upbit)
+    updateWithdraws(db,withdraws,account)
     
-    #print(deposits)
-    #print(withdraws)
     
     
     return 0
