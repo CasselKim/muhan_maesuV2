@@ -5,7 +5,17 @@ import json
 import os
 import requests
 from pyupbit.request_api import _send_get_request, _send_post_request, _send_delete_request
-#from mysite.polls.models import AccountState, UserInfo, AccessKey
+
+'''
+This Sync.py file is for update account's wallet for everyday or twice a day.
+There are several things that should be updated..
+- total_balance : total_cash + every coin's current value
+- total_deposit : Deposits + Withdraws with last_deposit_uuid and last_withdraws_uuid (done)
+- total_buy : every coin's amount of buy
+- total_cash
+- total_profit : every coin's current value - amount of buy
+- total_profit_percent : every coin's current value / amount of buy * 100 - 100
+'''
 
 
 class accountObj() : 
@@ -14,9 +24,11 @@ class accountObj() :
         self.upbit_secret_key = upbit_secret_key
         self.upbit_access_key = upbit_access_key
         self.slack_token = slack_token
+        
 def connectMySQL(password) : 
     print("MySQL Connected!!")
     return _mysql.connect(host="localhost",user="guest",passwd=password,db="muhan_db") # connect with MySQL
+
 def getDepositsHistory(upbit) : 
     url = "https://api.upbit.com/v1/deposits"
     headers = upbit._request_headers() 
@@ -44,12 +56,12 @@ def updateDeposits(db,deposits,account) :
              SET last_deposit_uuid='"""+new_last_deposit_uuid+"',total_deposit=total_deposit+"+str(total)+\
              " WHERE userid="+account.userid)
 
-
 def getWithdrawsHistory(upbit) : 
     url = "https://api.upbit.com/v1/withdraws"
     headers = upbit._request_headers() 
     response = requests.request("GET", url, headers=headers)
     return response.json()
+
 def updateWithdraws(db,withdraws,account)  :
     db.query("""
             SELECT * FROM account_state
@@ -84,6 +96,21 @@ def getAccounts(db) :
         account_list.append(accountObj(*map(lambda x : x.decode('ascii'),f)))
     return account_list
 
+
+def updateTotalBalance(db,upbit,account) : 
+    balances = upbit.get_balances()
+    cash = float(balances[0]['balance'])
+    
+    total = 0.0
+    for coin in balances[1:] : 
+        total += float(coin['balance']) * float(coin['avg_buy_price'])
+    total += cash
+    
+    db.query("""
+             UPDATE account_state
+             SET total_balance="""+total+\
+             " WHERE userid="+account.userid)
+    
     
 def account_sync(db,upbit,account) : 
     
@@ -102,6 +129,9 @@ def account_sync(db,upbit,account) :
     #print('비트코인 평단 :',upbit.get_avg_buy_price('KRW-BTC'))
     #print('비트코인 총 매수금액 :',int(upbit.get_amount('KRW-BTC')))
     #print('현재 비트코인 가격 :',pyupbit.get_current_price('KRW-BTC'))
+    
+    #Update total_balance
+    updateTotalBalance(db,upbit,account)
 
     #Update Deposits
     deposits = getDepositsHistory(upbit)
