@@ -7,14 +7,11 @@ import requests
 from pyupbit.request_api import _send_get_request, _send_post_request, _send_delete_request
 
 '''
-This Sync.py file is for update account's wallet for everyday or twice a day.
+This sync.py file is for update of account's wallet for everyday or twice a day.
 There are several things that should be updated..
-- total_balance : total_cash + every coin's current value
-- total_deposit : Deposits + Withdraws with last_deposit_uuid and last_withdraws_uuid (done)
+- total_deposit : Deposits + Withdraws with last_deposit_uuid and last_withdraws_uuid
 - total_buy : every coin's amount of buy
 - total_cash
-- total_profit : every coin's current value - amount of buy
-- total_profit_percent : every coin's current value / amount of buy * 100 - 100
 '''
 
 
@@ -146,8 +143,6 @@ def updateTotalProfit(db,upbit,account) :
             " WHERE userid="+account.userid)
     
 def account_sync(db,upbit,account) : 
-    #Update total_balance
-    updateTotalBalance(db,upbit,account)
 
     #Update Deposits
     deposits = getDepositsHistory(upbit)
@@ -162,12 +157,6 @@ def account_sync(db,upbit,account) :
     
     #Update total_cash
     updateTotalCash(db,upbit,account)
-    
-    #Update total_profit and total_profit_percent
-    updateTotalProfit(db,upbit,account)
-    
-    
-    
     
     return 0
 
