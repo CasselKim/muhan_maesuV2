@@ -91,21 +91,6 @@ def getAccounts(db) :
     for f in fetched : 
         account_list.append(accountObj(*map(lambda x : x.decode('ascii'),f)))
     return account_list
-
-def updateTotalBalance(db,upbit,account) : 
-    balances = upbit.get_balances()
-    cash = float(balances[0]['balance'])
-    
-    total = 0.0
-    for coin in balances[1:] : 
-        total += float(coin['balance']) * pyupbit.get_current_price('KRW-'+coin['currency'])
-    total += cash
-    
-    #print("total_balance total : {}".format(total))
-    db.query("""
-             UPDATE account_state
-             SET total_balance="""+str(total)+\
-             " WHERE userid="+account.userid)
     
 def updateTotalBuy(db,upbit,account) : 
     total_amount = upbit.get_amount('ALL')
@@ -124,24 +109,7 @@ def updateTotalCash(db,upbit,account) :
              UPDATE account_state
              SET total_cash="""+str(total_cash)+\
              " WHERE userid="+account.userid)
-    
-def updateTotalProfit(db,upbit,account) : 
-    db.query("""
-            SELECT total_balance,total_deposit FROM account_state
-            WHERE userid="""+account.userid)
-    r=db.store_result()
-    total_balance,total_deposit = map(lambda x : int(x), r.fetch_row()[0])
-    total_profit = total_balance-total_deposit
-    total_profit_percent = "%.2f" %(total_balance/total_deposit*100-100)
-    
-    #print("total_profit : {}".format(total_profit))
-    #print("total_profit_percent : {}".format(total_profit_percent))
-    
-    db.query("""
-            UPDATE account_state
-            SET total_profit="""+str(total_profit)+", total_profit_percent="+str(total_profit_percent)+\
-            " WHERE userid="+account.userid)
-    
+
 def account_sync(db,upbit,account) : 
 
     #Update Deposits
