@@ -41,63 +41,80 @@ def getAccounts(db) :
     for f in fetched : 
         account_list.append(accountObj(*map(lambda x : x.decode('ascii'),f)))
     return account_list
-
-def updateTotalBalance(db,upbit,account) : 
-    balances = upbit.get_balances()
-    cash = float(balances[0]['balance'])
     
-    total = 0.0
-    for coin in balances[1:] : 
-        total += float(coin['balance']) * pyupbit.get_current_price('KRW-'+coin['currency'])
-    total += cash
-    
-    #print("total_balance total : {}".format(total))
-    db.query("""
-             UPDATE account_state
-             SET total_balance="""+str(total)+\
-             " WHERE userid="+account.userid)
-    
-    
-def updateTotalProfit(db,upbit,account) : 
-    db.query("""
-            SELECT total_balance,total_deposit FROM account_state
-            WHERE userid="""+account.userid)
-    r=db.store_result()
-    total_balance,total_deposit = map(lambda x : int(x), r.fetch_row()[0])
-    total_profit = total_balance-total_deposit
-    total_profit_percent = "%.2f" %(total_balance/total_deposit*100-100)
-    
-    #print("total_profit : {}".format(total_profit))
-    #print("total_profit_percent : {}".format(total_profit_percent))
-    
-    db.query("""
-            UPDATE account_state
-            SET total_profit="""+str(total_profit)+", total_profit_percent="+str(total_profit_percent)+\
-            " WHERE userid="+account.userid)
-    
-def insertCoinPrice(db,upbit,account) : 
+def insertCoinPrice(db,account) : 
     db.query("""
             SELECT ticker FROM trade_per_coin
             WHERE userid="""+account.userid)
     r=db.store_result()
     
-    tickers = list(map(lambda x : x[0].decode('ascii'), r.fetch_row()))
-    for ticker in tickers : 
+    for _ in range(r.num_rows()) : 
+        ticker = r.fetch_row()[0][0].decode('ascii')
         price = pyupbit.get_current_price("KRW-"+ticker)
         print("INSERT INTO price_log(log_ticker,log_price,log_date) VALUES('"+ticker+"',"+str(price)+",'"+str(datetime.now())+"');")
         db.query("INSERT INTO price_log(log_ticker,log_price,log_date) VALUES('"+ticker+"',"+str(price)+",'"+str(datetime.now())+"');")
     
+def updateCoinProfit(db,upbit,account) : 
+    db.query("""
+            SELECT * FROM trade_per_coin
+            WHERE userid="""+account.userid)
+    r=db.store_result()       
     
+    total_coin = 0.0
+    total_my = 0.0
+    for _ in range(r.num_rows()) : 
+        coin = r.fetch_row()[0]
+        ticker = coin[2].decode('ascii')
+        
+        db.query("""
+            SELECT log_price FROM price_log
+            WHERE log_ticker='"""+ticker+"' ORDER BY log_date DESC LIMIT 1")
+        price = float(db.store_result().fetch_row()[0][0])
+        amount = upbit.get_balance('KRW-'+ticker)
+        my_average = upbit.get_avg_buy_price('KRW-'+ticker)
+        
+        profit = (price - my_average)*amount
+        profit_percent = price/my_average*100-100
+        print(profit_percent)
+        db.query("""
+            UPDATE trade_per_coin
+            SET coin_profit="""+str(profit)+", coin_profit_percent="+str(profit_percent)+\
+            " WHERE userid="+account.userid+" and ticker='"+ticker+"'")
+        
+        total_coin+=price*amount
+        total_my+=my_average*amount
+    
+    db.query("""
+            SELECT total_cash FROM account_state
+            WHERE userid="""+account.userid)
+    r=db.store_result()  
+    
+    total_cash = map(lambda x : float(x), r.fetch_row()[0])
+    updateTotalBalance(db,account,total_coin,total_cash)
+    updateTotalProfit(db,account,total_coin,total_my)
+
+def updateTotalBalance(db,account,total_coin,total_cash) : 
+    total_balance = total_coin+total_cash
+    db.query("""
+             UPDATE account_state
+             SET total_balance="""+str(total_balance)+\
+             " WHERE userid="+account.userid)
+
+def updateTotalProfit(db,account,total_coin,total_my) : 
+    total_profit = total_coin - total_my
+    total_profit_percent = total_coin / total_my * 100 - 100
+    db.query("""
+            UPDATE account_state
+            SET total_profit="""+str(total_profit)+", total_profit_percent="+str(total_profit_percent)+\
+            " WHERE userid="+account.userid)
     
 def account_sync(db,upbit,account) : 
-    #Update total_balance
-    updateTotalBalance(db,upbit,account)
-    
-    #Update total_profit and total_profit_percent
-    updateTotalProfit(db,upbit,account)
     
     #Insert coin price to price_log table
-    insertCoinPrice(db,upbit,account)
+    insertCoinPrice(db,account)
+    
+    #Update coin profit in trade_per_coin
+    updateCoinProfit(db,upbit,account)
     
     
     
