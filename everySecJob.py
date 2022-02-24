@@ -89,7 +89,7 @@ def updateCoinProfit(db,upbit,account) :
             WHERE userid="""+account.userid)
     r=db.store_result()  
     
-    total_cash = map(lambda x : float(x), r.fetch_row()[0])
+    total_cash = float(r.fetch_row()[0][0])
     updateTotalBalance(db,account,total_coin,total_cash)
     updateTotalProfit(db,account,total_coin,total_my)
 

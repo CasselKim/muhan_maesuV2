@@ -12,14 +12,14 @@ def index(request) :
         user = UserInfo.objects.get(id=get_user(request))
         account_state = AccountState.objects.get(userid=user)
         trade_per_coin = TradePerCoin.objects.filter(userid=user)
+        
+        for coin in trade_per_coin : 
+            setattr(coin, "current_value", coin.coin_profit+coin.average)
         context = {'account_state' : account_state, 'trade_per_coin':trade_per_coin}
         return render(request, 'polls/manage.html', context)
     else : 
         return redirect('common/login')
     
-class coinObject() : 
-    def __init__(self,coin) : 
-        self.coin = coin
 
 def googlechart(request) : 
     ticker = request.GET['ticker']
