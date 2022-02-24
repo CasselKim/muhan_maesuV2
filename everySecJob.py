@@ -5,7 +5,6 @@ import json
 import os
 import requests
 from datetime import datetime
-from pyupbit.request_api import _send_get_request, _send_post_request, _send_delete_request
 
 '''
 This everySecJob.py file is for update of coin's state for every second.
@@ -108,15 +107,13 @@ def updateTotalProfit(db,account,total_coin,total_my) :
             SET total_profit="""+str(total_profit)+", total_profit_percent="+str(total_profit_percent)+\
             " WHERE userid="+account.userid)
     
-def account_sync(db,upbit,account) : 
+def updatePrice(db,upbit,account) : 
     
     #Insert coin price to price_log table
     insertCoinPrice(db,account)
     
     #Update coin profit in trade_per_coin
     updateCoinProfit(db,upbit,account)
-    
-    
     
     return 0
 
@@ -141,4 +138,4 @@ if __name__ == "__main__" :
         upbit = pyupbit.Upbit(access_key, secret_key)
 
         # execute sync with account(upbit) and database(mysql)
-        account_sync(db,upbit,account)
+        updatePrice(db,upbit,account)
