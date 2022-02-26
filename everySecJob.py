@@ -5,6 +5,7 @@ import json
 import os
 import requests
 from datetime import datetime
+from .sync import updateTotalBuy,updateTotalCash
 
 '''
 This everySecJob.py file is for update of coin's state for every second.
@@ -15,6 +16,10 @@ There are several things that should be updated..
 - total_balance : total_cash + every coin's current value
 - total_profit : every coin's current value - amount of buy
 - total_profit_percent : every coin's current value / amount of buy * 100 - 100
+
+Also there are buy and sell cases..
+- Buy lower : when the price of coin drops under -10%, execute 1 buy (1 split)
+- Sell over : when the price of coin exceeds over +10%, execute sell all splits (coin)
 '''
 
 
@@ -50,7 +55,6 @@ def insertCoinPrice(db,account) :
     for _ in range(r.num_rows()) : 
         ticker = r.fetch_row()[0][0].decode('ascii')
         price = pyupbit.get_current_price("KRW-"+ticker)
-        print("INSERT INTO price_log(log_ticker,log_price,log_date) VALUES('"+ticker+"',"+str(price)+",'"+str(datetime.now())+"');")
         db.query("INSERT INTO price_log(log_ticker,log_price,log_date) VALUES('"+ticker+"',"+str(price)+",'"+str(datetime.now())+"');")
     
 def updateCoinProfit(db,upbit,account) : 
@@ -74,7 +78,6 @@ def updateCoinProfit(db,upbit,account) :
         
         profit = (price - my_average)*amount
         profit_percent = price/my_average*100-100
-        print(profit_percent)
         db.query("""
             UPDATE trade_per_coin
             SET coin_profit="""+str(profit)+", coin_profit_percent="+str(profit_percent)+\
@@ -107,6 +110,39 @@ def updateTotalProfit(db,account,total_coin,total_my) :
             SET total_profit="""+str(total_profit)+", total_profit_percent="+str(total_profit_percent)+\
             " WHERE userid="+account.userid)
     
+def buySellConditionJob(db,upbit,account) : 
+    db.query("""
+            SELECT * FROM trade_per_coin
+            WHERE userid="""+account.userid)
+    r=db.store_result()       
+    
+    for _ in range(r.num_rows()) : 
+        coin = r.fetch_row()[0]
+        ticker = coin[2].decode('ascii')
+        
+        db.query("""
+            SELECT log_price FROM price_log
+            WHERE log_ticker='"""+ticker+"' ORDER BY log_date DESC LIMIT 1")
+        price = float(db.store_result().fetch_row()[0][0])
+        my_average = upbit.get_avg_buy_price('KRW-'+ticker)
+        
+        #buy lower
+        split,execution_count,already_buy,remain = int(coin[4]), int(coin[6]), bool(int(coin[7])), float(coin[8])
+        if price < my_average*0.9 and execution_count<40 and remain>=split and not already_buy : 
+            upbit.buy_market_order(ticker, split)
+            # [TODO] buy Job : update account_state(cash, buy) and trade_per_coin, insert row in trade_history.
+        
+        #sell over
+        if price >= my_average*1.1 :
+            balance = upbit.get_balance(ticker)
+            upbit.sell_market_order(ticker, balance)
+            # [TODO] sell Job : update account_state(cash, buy, sell_count) and trade_per_coin, insert row in trade_history.
+            
+            # restart
+            upbit.buy_market_order(ticker, split)
+            # [TODO] buy Job : update account_state(cash, buy) and trade_per_coin, insert row in trade_history.
+        
+    
 def updatePrice(db,upbit,account) : 
     
     #Insert coin price to price_log table
@@ -114,6 +150,9 @@ def updatePrice(db,upbit,account) :
     
     #Update coin profit in trade_per_coin
     updateCoinProfit(db,upbit,account)
+    
+    #Check buy under case and sell over case
+    buySellConditionJob(db,upbit,account)
     
     return 0
 
