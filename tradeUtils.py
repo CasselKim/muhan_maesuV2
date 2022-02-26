@@ -23,3 +23,20 @@ there are several cases..
  - same with case 1, except update all value of trade_per_coin's fields as followed input value.
 
 '''
+
+def update_account(db,upbit,account,type) : 
+    
+    #update account_state
+    total_buy = upbit.get_amount('ALL')
+    total_cash = upbit.get_balance(ticker='KRW')
+    
+    if type=="buy" : #buy
+        db.query("""
+                UPDATE account_state
+                SET total_buy="""+str(total_buy)+",total_cash="+str(total_cash)+\
+                " WHERE userid="+account.userid)
+    else : #sell
+        db.query("""
+                UPDATE account_state
+                SET total_buy="""+str(total_buy)+",total_cash="+str(total_cash)+",sell_count=sell_count+1"+\
+                " WHERE userid="+account.userid)
