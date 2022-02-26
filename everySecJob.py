@@ -135,8 +135,8 @@ def buySellConditionJob(db,upbit,account) :
         #sell over
         if price >= my_average*1.1 :
             balance = upbit.get_balance(ticker)
-            upbit.sell_market_order(ticker, balance)
             # [TODO] sell Job : update account_state(cash, buy, sell_count) and trade_per_coin, insert row in trade_history.
+            upbit.sell_market_order(ticker, balance)
             
             # restart
             upbit.buy_market_order(ticker, split)
