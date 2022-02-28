@@ -120,5 +120,20 @@ def insertTradeHistory(db,upbit,account,type,*args) :
                     str(int(history_execution_time))+",'"+str(history_date)+"',0,"+str(history_my_average)+","+str(float(history_profit))+')')
     
 
+def buy_sell_job(db,upbit,account,type,*kargs) : 
+    '''
+    kargs format should be like this
+    {
+        'history_parameters'  : [
+            (if type==buy) amount_of_buy (ex:5000)
+            (if type==restart) principal, ticker_name (ex:400000, 비트코인)
+        ]
+        'coin_parameters' : [
+            ticker, buy_or_sell, amount of buy (ex:BTC,1(sell),5000)
+        ]
+    }
+    '''
     
-    
+    updateAccount(db,upbit,account,type)
+    insertTradeHistory(db,upbit,account,type,kargs['history_parameters'])
+    updateTradePerCoin(db,upbit,account,type,kargs['coin_parameters'])
