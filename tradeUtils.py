@@ -25,6 +25,8 @@ there are several cases..
 4. Restart
  - same with case 1, except update all value of trade_per_coin's fields as followed input value.
  * when restart (or start) event, it always buy event immediately (buy amount : 5000, already=1). 
+ 
+overall order : updateAccount -> insertTradeHistory -> updateAccount
 
 '''
 
@@ -85,4 +87,38 @@ def updateTradePerCoin(db,upbit,account,type,*args) :
             raise(EXCEPTION("Wrong type input"))
             
             
-            
+def insertTradeHistory(db,upbit,account,type,*args) : 
+    '''
+    args input form shoulb be like : [ticker, buy(0) or sell(1), amount of buy]
+    and the other should be inserted...
+    : UserID, coin_price, history_execution_time, history_date, history_done, history_my_average, history_profit
+    '''
+    
+    ticker, buy_or_sell, amount = args
+    db.query("""
+             SELECT log_price FROM price_log
+             WHERE log_ticker='"""+ticker+"' ORDER BY log_date DESC LIMIT 1")
+    coin_price = float(db.store_result().fetch_row()[0][0])
+    
+    db.query("""
+            SELECT execution_count,coin_profit FROM trade_per_coin
+            WHERE userid="""+account.userid)
+    history_execution_time, history_profit = db.store_result()[0]
+    history_date = datetime.now()
+    history_my_average = upbit.get_avg_buy_price('KRW-'+ticker)
+    
+    if type=="sell" : 
+        db.query("""
+            UPDATE trade_history
+            SET history_done=1
+            WHERE userid="""+account.userid+" and ticker='"+ticker+"' and history_done=0")
+    
+    db.query("""
+            INSERT INTO trade_history (UserID, history_ticker, history_buy_or_sell, history_coin_price, history_amount, 
+                                        history_execution_time, history_date, history_done, history_my_average, history_profit)
+            VALUES ("""+account.userid+",'"+ticker+"',"+str(int(buy_or_sell))+","+str(coin_price)+","+str(amount)+","+\
+                    str(int(history_execution_time))+",'"+str(history_date)+"',0,"+str(history_my_average)+","+str(float(history_profit))+')')
+    
+
+    
+    

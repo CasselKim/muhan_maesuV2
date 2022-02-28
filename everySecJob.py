@@ -5,7 +5,6 @@ import json
 import os
 import requests
 from datetime import datetime
-from .sync import updateTotalBuy,updateTotalCash
 
 '''
 This everySecJob.py file is for update of coin's state for every second.
