@@ -6,6 +6,7 @@ import os
 import requests
 from datetime import datetime
 from tradeUtils import buy_sell_job
+import time
 
 '''
 This everySecJob.py file is for update of coin's state for every second.
@@ -68,7 +69,6 @@ def updateCoinProfit(db,upbit,account) :
     for _ in range(r.num_rows()) : 
         coin = r.fetch_row()[0]
         ticker = coin[2].decode('ascii')
-        
         db.query("""
             SELECT log_price FROM price_log
             WHERE log_ticker='"""+ticker+"' ORDER BY log_date DESC LIMIT 1")
@@ -82,7 +82,6 @@ def updateCoinProfit(db,upbit,account) :
             UPDATE trade_per_coin
             SET coin_profit="""+str(profit)+", coin_profit_percent="+str(profit_percent)+\
             " WHERE userid="+account.userid+" and ticker='"+ticker+"'")
-        
         total_coin+=price*amount
         total_my+=my_average*amount
     
@@ -112,23 +111,6 @@ def updateTotalProfit(db,account,total_coin,total_my) :
     
 def buySellConditionJob(db,upbit,account) : 
     
-    ticker = "NU"
-    buy = {
-        'coin_parameters'  : 5000,
-        'history_parameters' : [0, 5000]
-    }
-    sell = {
-        'coin_parameters'  : 5000,
-        'history_parameters' : [1, 5000]
-    }
-    restart = {
-        'coin_parameters'  : [40000, "누사이퍼"],
-        'history_parameters' : [0, 5000]
-    }
-    
-    buy_sell_job(db,upbit,account,"restart",ticker,restart)
-    
-    '''
     db.query("""
             SELECT * FROM trade_per_coin
             WHERE userid="""+account.userid)
@@ -147,36 +129,53 @@ def buySellConditionJob(db,upbit,account) :
         
         #buy lower
         split,execution_count,already_buy,remain = int(coin[4]), int(coin[6]), bool(int(coin[7])), float(coin[8])
-        if price < my_average*0.9 and execution_count<40 and remain>=split and not already_buy : 
-            upbit.buy_market_order(ticker, split)
-            # [TODO] buy Job : update account_state(cash, buy) and trade_per_coin, insert row in trade_history.
+        if price < my_average*0.9 and execution_count<40 and remain>=split and not already_buy :  
+            upbit.buy_market_order('KRW-'+ticker, split)
+            buy = {
+                'coin_parameters'  : 5000,
+                'history_parameters' : [0, 5000]
+            }
+            buy_sell_job(db,upbit,account,"buy_lower",ticker,buy)
         
         #sell over
         if price >= my_average*1.1 :
             balance = upbit.get_balance(ticker)
-            # [TODO] sell Job : update account_state(cash, buy, sell_count) and trade_per_coin, insert row in trade_history.
-            upbit.sell_market_order(ticker, balance)
+            
+            # sell
+            sell = {
+                'coin_parameters'  : 5000,
+                'history_parameters' : [1, 5000]
+            }
+            buy_sell_job(db,upbit,account,"sell",ticker,sell)
+            upbit.sell_market_order('KRW-'+ticker, balance)
+            
+            time.sleep(3)
             
             # restart
-            upbit.buy_market_order(ticker, split)
-            # [TODO] buy Job : update account_state(cash, buy) and trade_per_coin, insert row in trade_history.
-        '''
+            restart = {
+                'coin_parameters'  : 40000,
+                'history_parameters' : [0, 5000]
+            }
+            upbit.buy_market_order('KRW-'+ticker, 5000)
+            buy_sell_job(db,upbit,account,"restart",ticker,restart)
+        
     
 def updatePrice(db,upbit,account) : 
     
     #Insert coin price to price_log table
     insertCoinPrice(db,account)
     
+    #Check buy under case and sell over case
+    buySellConditionJob(db,upbit,account)
+    
     #Update coin profit in trade_per_coin
     updateCoinProfit(db,upbit,account)
     
-    #Check buy under case and sell over case
-    buySellConditionJob(db,upbit,account)
     
     return 0
 
 if __name__ == "__main__" : 
-    
+    start = datetime.now()
     # get secret key from json file
     secrets = json.loads(open('mysite/secret.json').read())
     password = secrets["PASSWORD"]
@@ -197,3 +196,6 @@ if __name__ == "__main__" :
 
         # execute sync with account(upbit) and database(mysql)
         updatePrice(db,upbit,account)
+        
+    end = datetime.now()
+    print((end-start).seconds)

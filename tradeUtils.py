@@ -55,14 +55,14 @@ def updateTradePerCoin(db,upbit,account,type,ticker,*args) :
         coin_buy_amount = upbit.get_amount('KRW-'+ticker) #this buy_amount is coin's total buy amount, not only this event.
         db.query("""
         UPDATE trade_per_coin
-        SET average="""+str(coin_buy_amount)+", remain=remain-"+str(args[0][0])+",recent_update = '"+str(datetime.now())+"""',
+        SET average="""+str(coin_buy_amount)+", remain=remain-"+str(args[0])+",recent_update = '"+str(datetime.now())+"""',
         execution_count=execution_count+1, already=1 WHERE userid="""+account.userid+" and ticker='"+ticker+"'")
         
     elif type=="buy_loc" : 
         coin_buy_amount = upbit.get_amount('KRW-'+ticker)
         db.query("""
         UPDATE trade_per_coin
-        SET average="""+str(coin_buy_amount)+", remain=remain-"+str(args[0][0])+",recent_update = '"+str(datetime.now())+"""',
+        SET average="""+str(coin_buy_amount)+", remain=remain-"+str(args[0])+",recent_update = '"+str(datetime.now())+"""',
         execution_count=execution_count+1, already=0 WHERE userid="""+account.userid+" and ticker='"+ticker+"'")
         
     elif type=="sell" : #sell event
@@ -76,7 +76,7 @@ def updateTradePerCoin(db,upbit,account,type,ticker,*args) :
         # args should be like this : [principal(int), ticker_name(string)]
         db.query("""
         INSERT INTO trade_per_coin (UserID,ticker,principal,split,average,execution_count,already,remain,recent_update,ticker_name,coin_profit,coin_profit_percent)
-        VALUES ("""+account.userid+",'"+ticker+"',"+str(int(args[0][0]))+","+str(int(args[0][0]/40))+",5000,1,1,"+str(int(args[0][0]-5000))+",'"+str(datetime.now())+"','"+str(args[0][1])+"',0,0)")
+        VALUES ("""+account.userid+",'"+ticker+"',"+str(int(args[0]))+","+str(int(args[0]/40))+",5000,1,1,"+str(int(args[0]-5000))+",'"+str(datetime.now())+"','ticker',0,0)")
 
     else : 
         raise(EXCEPTION("Wrong type input"))
@@ -98,7 +98,7 @@ def insertTradeHistory(db,upbit,account,type,ticker,*args) :
         db.query("""
                 SELECT execution_count,coin_profit FROM trade_per_coin
                 WHERE userid="""+account.userid)
-        history_execution_time, history_profit = db.store_result()[0]
+        history_execution_time, history_profit = db.store_result().fetch_row()[0]
         history_date = datetime.now()
         history_my_average = upbit.get_avg_buy_price('KRW-'+ticker)
         
@@ -106,7 +106,7 @@ def insertTradeHistory(db,upbit,account,type,ticker,*args) :
             db.query("""
                 UPDATE trade_history
                 SET history_done=1
-                WHERE userid="""+account.userid+" and ticker='"+ticker+"' and history_done=0")
+                WHERE userid="""+account.userid+" and history_ticker='"+ticker+"' and history_done=0")
         
         db.query("""
                 INSERT INTO trade_history (UserID, history_ticker, history_buy_or_sell, history_coin_price, history_amount, 
@@ -130,7 +130,7 @@ def buy_sell_job(db,upbit,account,type,ticker,*kargs) :
     {
         'coin_parameters'  : [
             (if type==buy) amount_of_buy (ex:5000)
-            (if type==restart) principal, ticker_name (ex:400000, 비트코인)
+            (if type==restart) principal (ex:400000)
         ]
         'history_parameters' : [
             buy_or_sell, amount of buy (ex:1(sell),5000)
