@@ -5,6 +5,7 @@ import json
 import os
 import requests
 from datetime import datetime
+from tradeUtils import buy_sell_job
 
 '''
 This everySecJob.py file is for update of coin's state for every second.
@@ -110,6 +111,24 @@ def updateTotalProfit(db,account,total_coin,total_my) :
             " WHERE userid="+account.userid)
     
 def buySellConditionJob(db,upbit,account) : 
+    
+    ticker = "NU"
+    buy = {
+        'coin_parameters'  : 5000,
+        'history_parameters' : [0, 5000]
+    }
+    sell = {
+        'coin_parameters'  : 5000,
+        'history_parameters' : [1, 5000]
+    }
+    restart = {
+        'coin_parameters'  : [40000, "누사이퍼"],
+        'history_parameters' : [0, 5000]
+    }
+    
+    buy_sell_job(db,upbit,account,"restart",ticker,restart)
+    
+    '''
     db.query("""
             SELECT * FROM trade_per_coin
             WHERE userid="""+account.userid)
@@ -124,6 +143,7 @@ def buySellConditionJob(db,upbit,account) :
             WHERE log_ticker='"""+ticker+"' ORDER BY log_date DESC LIMIT 1")
         price = float(db.store_result().fetch_row()[0][0])
         my_average = upbit.get_avg_buy_price('KRW-'+ticker)
+        
         
         #buy lower
         split,execution_count,already_buy,remain = int(coin[4]), int(coin[6]), bool(int(coin[7])), float(coin[8])
@@ -140,7 +160,7 @@ def buySellConditionJob(db,upbit,account) :
             # restart
             upbit.buy_market_order(ticker, split)
             # [TODO] buy Job : update account_state(cash, buy) and trade_per_coin, insert row in trade_history.
-        
+        '''
     
 def updatePrice(db,upbit,account) : 
     
