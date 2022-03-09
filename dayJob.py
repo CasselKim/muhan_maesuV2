@@ -128,6 +128,9 @@ def account_sync(db,upbit,account) :
     
     return 0
 
+def loc_job(db,upbit,account) : 
+    
+
 if __name__ == "__main__" : 
     
     # get secret key from json file
