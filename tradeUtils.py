@@ -124,7 +124,7 @@ def insertTradeHistory(db,upbit,account,type,ticker,*args) :
                         "1,'"+str(history_date)+"',0,"+str(current_price)+",0)")
     
 
-def buy_sell_job(db,upbit,account,type,ticker,*kargs) : 
+def buy_sell_job(db,upbit,account,type,ticker,params) : 
     '''
     kargs format should be like this
     {
@@ -139,7 +139,7 @@ def buy_sell_job(db,upbit,account,type,ticker,*kargs) :
     '''
 
     updateAccount(db,upbit,account,type)
-    insertTradeHistory(db,upbit,account,type,ticker,kargs[0]['history_parameters'])
-    updateTradePerCoin(db,upbit,account,type,ticker,kargs[0]['coin_parameters'])
+    insertTradeHistory(db,upbit,account,type,ticker,params['history_parameters'])
+    updateTradePerCoin(db,upbit,account,type,ticker,params['coin_parameters'])
 
     
