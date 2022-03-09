@@ -9,7 +9,7 @@ from tradeUtils import buy_sell_job
 import time
 
 '''
-This everySecJob.py file is for update of coin's state for every second.
+This secJob.py file is for update of coin's state for every second.
 There are several things that should be updated..
 - price_log
 - trade_per_coin.coin_profit : coin's value - trade_per_coin.average
@@ -132,8 +132,8 @@ def buySellConditionJob(db,upbit,account) :
         if price < my_average*0.9 and execution_count<40 and remain>=split and not already_buy :  
             upbit.buy_market_order('KRW-'+ticker, split)
             buy = {
-                'coin_parameters'  : 5000,
-                'history_parameters' : [0, 5000]
+                'coin_parameters'  : split,
+                'history_parameters' : [0, split]
             }
             buy_sell_job(db,upbit,account,"buy_lower",ticker,buy)
         
@@ -143,8 +143,8 @@ def buySellConditionJob(db,upbit,account) :
             
             # sell
             sell = {
-                'coin_parameters'  : 5000,
-                'history_parameters' : [1, 5000]
+                'coin_parameters'  : balance,
+                'history_parameters' : [1, balance]
             }
             buy_sell_job(db,upbit,account,"sell",ticker,sell)
             upbit.sell_market_order('KRW-'+ticker, balance)
@@ -152,11 +152,14 @@ def buySellConditionJob(db,upbit,account) :
             time.sleep(3)
             
             # restart
+            # [TODO] principal should be able to input on the admin page
+            principal = 400000
+            split = principal//40
             restart = {
-                'coin_parameters'  : 40000,
-                'history_parameters' : [0, 5000]
+                'coin_parameters'  : principal, # principal
+                'history_parameters' : [0, split] # buy, split
             }
-            upbit.buy_market_order('KRW-'+ticker, 5000)
+            upbit.buy_market_order('KRW-'+ticker, split)
             buy_sell_job(db,upbit,account,"restart",ticker,restart)
         
     
