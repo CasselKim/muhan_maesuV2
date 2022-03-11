@@ -28,7 +28,6 @@ Manage application by admin page -> No Domain yet
 - now you can access Django page by using `python runserver` on local environments (2021-02-03)  
 
 ## Now working..
-
-Sychronizing database and upbit's wallet
+Scheduling sync and buy(sell) job with celery and rabbitMQ  
 
 ![image](01.png)  
