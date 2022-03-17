@@ -12,6 +12,10 @@ Let's automate **infinite buy** method that popular these days
 ## Requirements
 - requests
 - pyupbit
+- django
+- celery
+- rabbitMQ
+- docker
 
 ## Use  
 Manage application by admin page -> No Domain yet
