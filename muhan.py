@@ -61,6 +61,7 @@ if __name__ == "__main__":
 
         for coin in coins : 
             if str(datetime.now())[18] in ('0','2','4','6','8') : # for every two second
+               
                 # End session
                 if coin.remain <= 10000 : 
                     result = coin.sell_end()
