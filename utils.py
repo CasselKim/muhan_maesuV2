@@ -135,7 +135,10 @@ class coin() :
         
     def get_current_price(self) : 
         for _ in range(20) : 
-            price = pu.get_current_price(self.ticker)
+            try : 
+                price = pu.get_current_price(self.ticker)
+            except : 
+                price = 0
             if price : return price
         raise(Exception("Can't get the price from Upbit API"))
     
