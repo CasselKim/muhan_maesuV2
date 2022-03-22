@@ -32,6 +32,9 @@ Manage application by admin page -> No Domain yet
 - now you can access Django page by using `python runserver` on local environments (2021-02-03)  
 
 ## Now working..
-Scheduling sync and buy(sell) job with celery and rabbitMQ  
+1. make amazon linux 2 (CentOS) instance (EC2)
+2. install docker and deploy the project on container
+3. make project to docker image, upload on docker hub
+4. build image on docker of local environment, continue development with docker and k8s. (Scheduling sync and buy(sell) job with celery and rabbitMQ)
 
 ![image](01.png)  
