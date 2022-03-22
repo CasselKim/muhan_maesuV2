@@ -21,6 +21,14 @@ There are several things that should be updated..
 Also there are buy and sell cases..
 - Buy lower : when the price of coin drops under -10%, execute 1 buy (1 split)
 - Sell over : when the price of coin exceeds over +10%, execute sell all splits (coin)
+
+[TODO]
+Secjob executes every second, so even a few amount of API call can be critical.
+Upbit API Call like get_current_price(), get_balance(), and get_avg_buy_price() must be minized.
+- insert average price(float[20,10], not null) field in trade_per_coin table.
+- change name of average field in trade_per_coin table to buy_amount
+    - because it confuses the meaning of field's value - actually it is amount of buy (5000, 10000, ...)
+- replace all of upbit API calls into queries.
 '''
 
 
