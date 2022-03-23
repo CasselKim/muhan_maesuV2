@@ -13,8 +13,6 @@ Let's automate **infinite buy** method that popular these days
 - requests
 - pyupbit
 - django
-- celery
-- rabbitMQ
 - docker
 
 ## Use  
@@ -35,6 +33,7 @@ Manage application by admin page -> No Domain yet
 1. make amazon linux 2 (CentOS) instance (EC2)
 2. install docker and deploy the project on container
 3. make project to docker image, upload on docker hub
-4. build image on docker of local environment, continue development with docker and k8s. (Scheduling sync and buy(sell) job with celery and rabbitMQ)
+4. build image on docker of local environment, continue development with docker and k8s.  
+(we don't need to use celery and rabbitMQ)
 
 ![image](01.png)  
