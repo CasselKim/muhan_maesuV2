@@ -1,34 +1,22 @@
+'''
+tradeUtils.py
+===========
+this module provide mothods for updating database after buy or sell event
+Attributes:
+    updateAccount(db,upbit:Upbit,account:accountObj,type)
+    updateTradePerCoin(db,upbit:Upbit,account:accountObj,type,ticker:str,*args)
+    insertTradeHistory(db,upbit:Upbit,account:accountObj,type,ticker:str,*args)
+    buy_sell_job(db,upbit:Upbit,account:accountObj,type,ticker:str,params)
+      
+Example:
+    
+Todo :    
+    - update docstring
+    - devide every methods into unit methods to follow functional programming.
+'''
+
 from tkinter import EXCEPTION
-import pyupbit
 from datetime import datetime
-
-'''
-this tradeUtils.py file gathers methods for updating database after buy or sell event
-there are several cases..
-1. Buy lower
- - update account_state.total_buy and .total_cash (no needs to update total balance and others because they updates every second)
- - update trade_per_coin.average, .execution_count, .already, .remain and .recent_update
- - insert new row of trade_history;
-   - id, UserID, history_ticker, history_buy_or_sell, history_coin_price, history_amount, 
-     history_execution_time, history_date, history_done, history_my_average, history_profit
-     - history_profit = (history_coin_price-history_my_average)*upbit.get_balance(ticker)
-     
-2. Buy LOC
- - same with case 1, except update trade_per_coin.already to 0
- 
-3. Sell over, Sell end
- - same with case 1, except
-   - update account_state.sell_count to .sell_count+1
-   - update trade_history's existing rows where done=0 to done=1;
-   - remove trade_per_coin's row corrensponding with account_id and ticker
-   
-4. Restart
- - same with case 1, except update all value of trade_per_coin's fields as followed input value.
- * when restart (or start) event, it always buy event immediately (buy amount : 5000, already=1). 
- 
-overall order : updateAccount -> insertTradeHistory -> updateAccount
-
-'''
 
 def updateAccount(db,upbit,account,type) : 
     
