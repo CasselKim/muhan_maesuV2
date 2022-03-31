@@ -26,16 +26,17 @@ def updateAccount(db,upbit,account:accountObj,type:str) -> None:
     this method update account's total_buy and total_cash to account_state.total_buy, account_state.total_cash
     if type is sell, count sell_count up for 1
     
-    Attributes:
-        updateAccount(db,upbit:Upbit,account:accountObj,type)
-        updateTradePerCoin(db,upbit:Upbit,account:accountObj,type,ticker:str,*args)
-        insertTradeHistory(db,upbit:Upbit,account:accountObj,type,ticker:str,*args)
-        buy_sell_job(db,upbit:Upbit,account:accountObj,type,ticker:str,params)
+    Args :
+        db : DB object from _mysql()
+        upbit : upbit object from pyupbit.upbit
+        account ": accountObj from dayJob.py
+        type : "buy" or "sell"
         
-    Example:
+    Example :
+        updateAccount(db,upbit,account,"buy")
         
     Todo :    
-        - update docstring
+        - define arguments' type (db, upbit)
         - devide every methods into unit methods to follow functional programming.
     '''
         
@@ -55,8 +56,38 @@ def updateAccount(db,upbit,account:accountObj,type:str) -> None:
                 " WHERE userid="+account.userid)
 
 def updateTradePerCoin(db,upbit,account,type,ticker,*args) : 
-    # args is buy amount of this event when type=="buy".
-    # Ex) updateTradePerCoin(db,upbit,account,"buy",5000)
+    '''
+    updateTradePerCoin(db,upbit,account,type,ticker,*args)
+    ===========
+    this method update Coin's state to trade_per_coin table
+    It conditions with type {"buy_lower", "buy_loc", "sell", "restart"}
+    - buy_lower : buy when the price is lower than th average about 10%
+    - buy_loc : buy when setting time has come. the price is differ from price (price is in the args)
+    - sell : sell when the price is upper than the average about 10% (delete trade_per_coin table)
+    - restart : restart when process end (insert new trade_per_coin table)
+    
+    Args :
+        db : DB object from _mysql()
+        upbit : upbit object from pyupbit.upbit
+        account ": accountObj from dayJob.py
+        type : {"buy_lower", "buy_loc", "sell", "restart"}
+        ticker : ticker name of coin
+        args : params by type {
+            'coin_parameters'  : int,
+            'history_parameters' : [int, int]
+        }
+        
+    Example :
+        buy = {
+                'coin_parameters'  : split,
+                'history_parameters' : [0, split]
+        }
+        buy_sell_job(db,upbit,account,"buy_loc","BTC",buy)
+        
+    Todo :    
+        - define arguments' type (db, upbit)
+        - devide every methods into unit methods to follow functional programming.
+    '''
     
     if type=="buy_lower" : 
         coin_buy_amount = upbit.get_amount('KRW-'+ticker) #this buy_amount is coin's total buy amount, not only this event.
