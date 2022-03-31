@@ -17,9 +17,28 @@ Todo :
 
 from tkinter import EXCEPTION
 from datetime import datetime
+from .dayJob import *
 
-def updateAccount(db,upbit,account,type) : 
+def updateAccount(db,upbit,account:accountObj,type:str) -> None: 
+    '''
+    updateAccount(db,upbit,account,type)
+    ===========
+    this method update account's total_buy and total_cash to account_state.total_buy, account_state.total_cash
+    if type is sell, count sell_count up for 1
     
+    Attributes:
+        updateAccount(db,upbit:Upbit,account:accountObj,type)
+        updateTradePerCoin(db,upbit:Upbit,account:accountObj,type,ticker:str,*args)
+        insertTradeHistory(db,upbit:Upbit,account:accountObj,type,ticker:str,*args)
+        buy_sell_job(db,upbit:Upbit,account:accountObj,type,ticker:str,params)
+        
+    Example:
+        
+    Todo :    
+        - update docstring
+        - devide every methods into unit methods to follow functional programming.
+    '''
+        
     #update account_state
     total_buy = upbit.get_amount('ALL')
     total_cash = upbit.get_balance(ticker='KRW')
