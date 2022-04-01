@@ -4,7 +4,7 @@ from MySQLdb import _mysql
 import json
 import os
 import requests
-from tradeUtils import buy_sell_job
+from muhan.tradeUtils import buy_sell_job
 from pyupbit.request_api import _send_get_request, _send_post_request, _send_delete_request
 import time
 
@@ -17,7 +17,7 @@ There are several things that should be updated..
 '''
 
 
-class accountObj() : 
+class accountObj(object) : 
     def __init__(self,userid,upbit_secret_key,upbit_access_key,slack_token) : 
         self.userid = userid
         self.upbit_secret_key = upbit_secret_key

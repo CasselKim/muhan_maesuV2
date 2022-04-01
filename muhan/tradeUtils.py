@@ -17,9 +17,10 @@ Todo :
 
 from tkinter import EXCEPTION
 from datetime import datetime
-from .dayJob import *
+import pyupbit
 
-def updateAccount(db,upbit,account:accountObj,type:str) -> None: 
+
+def updateAccount(db,upbit,account:object,type:str) -> None: 
     '''
     updateAccount(db,upbit,account,type)
     ===========
@@ -109,7 +110,6 @@ def updateTradePerCoin(db,upbit,account,type,ticker,*args) :
         WHERE userid="""+account.userid+" and ticker='"+ticker+"'")
         
     elif type=="restart" : 
-        print(args)
         # input value will be trade_per_coin row's new value.
         # args should be like this : [principal(int), ticker_name(string)]
         db.query("""

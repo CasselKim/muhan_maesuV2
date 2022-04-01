@@ -5,7 +5,7 @@ import json
 import os
 import requests
 from datetime import datetime
-from tradeUtils import buy_sell_job
+from muhan.tradeUtils import buy_sell_job
 import time
 
 '''
